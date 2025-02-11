@@ -1,4 +1,5 @@
 using GroovyParserBackend.Entities;
+using System.ComponentModel;
 
 namespace GroovyParserBackend
 {
@@ -111,6 +112,145 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         type = TokenType.None;
                         break;
+                    case '>':
+                        if (pos != sourceCode.Length -2 && sourceCode[pos + 1] == '>' && sourceCode[pos + 2] == '>')
+                        {
+                            pos += 2;
+                            type = TokenType.UnsignedRightShift;
+                            tokens.Add(new Token {
+                                Value = ">>>",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.GreaterOrEqual;
+                            tokens.Add(new Token
+                            {
+                                Value = ">=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '>')
+                        {
+                            pos++;
+                            type = TokenType.RightShift;
+                            tokens.Add(new Token
+                            {
+                                Value = ">>",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.GreaterThan;
+                            tokens.Add(new Token
+                            {
+                                Value = ">",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '<':
+                        if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '>')
+                        {
+                            pos += 2;
+                            type = TokenType.SpaceshipOperator;
+                            tokens.Add(new Token
+                            {
+                                Value = "<=>",
+                                Type = type,
+                            });
+                        }
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.LessOrEqual;
+                            tokens.Add(new Token
+                            {
+                                Value = "<=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length -1 && sourceCode[pos+1] == '<')
+                        {
+                            pos++;
+                            type = TokenType.LeftShift;
+                            tokens.Add(new Token
+                            {
+                                Value = "<<",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.LessThan;
+                            tokens.Add(new Token
+                            {
+                                Value = "<",
+                                Type = type,
+                            });
+                        }
+
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '?':
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == ':')
+                        {
+                            pos++;
+                            type = TokenType.ElvisOperator;
+                            tokens.Add(new Token
+                            {
+                                Value = "?:",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.ElvisAssignment;
+                            tokens.Add(new Token
+                            {
+                                Value = "?=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '[')
+                        {
+                            pos += 2;
+                            type = TokenType.Identifier;
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+
+                            var innearStr = String.Empty;
+                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != ']')
+                            {
+                                innearStr += sourceCode[pos++];
+                            }
+
+                            var tokenList = Tokenize(innearStr);
+                            tokens.AddRange(tokenList);
+
+                            type = TokenType.SafeSubscriptOperator;
+                            tokens.Add(new Token
+                            {
+                                Value = "?[]",
+                                Type = type,
+                            });
+                            previousToken = type;
+                            value = string.Empty;
+                            type = TokenType.None;
+                        }
+                        break;
                     case '.':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
                         {
@@ -215,6 +355,14 @@ namespace GroovyParserBackend
                         value += ch;
                         break;
                 }
+            }
+            if (value != string.Empty)
+            {
+                tokens.Add(new Token
+                {
+                    Value = value,
+                    Type = type,
+                });
             }
             return tokens;
         }

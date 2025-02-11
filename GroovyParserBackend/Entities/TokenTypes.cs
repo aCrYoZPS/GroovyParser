@@ -18,26 +18,26 @@ namespace GroovyParserBackend.Entities
         Braces, // []
 
         Equal, // ==
-        GreaterThan,
-        LessThan,
-        GreaterOrEqual,
-        LessOrEqual,
+        GreaterThan,    // [DONE]
+        LessThan,       // [DONE]
+        GreaterOrEqual, // [DONE]
+        LessOrEqual,    // [DONE]
         NotEqual,
         Identical, // === ))))))))
         NotIdentical, // !==))))))
 
         TernaryOperator,
 
-        ElvisOperator, // sth ?: sth_other
-        ElvisAssignment, // sth ?= sth_other
+        ElvisOperator,  // [DONE] sth ?: sth_other
+        ElvisAssignment,// [DONE] sth ?= sth_other
 
         BitwiseAnd,
         BitwiseOr,
         BitwiseNot,
         BitwiseXor,
-        LeftShift, // <<
-        RightShift, // >>
-        UnsignedRightShift, // >>>
+        LeftShift,      // [DONE] <<
+        RightShift,     // [DONE] >>
+        UnsignedRightShift, // [DONE] >>>
 
         And,
         Or,
@@ -78,10 +78,10 @@ namespace GroovyParserBackend.Entities
 
         RangeOperator, // 1..5 or 'a'..'z'... damn...
 
-        SpaceshipOperator, // <=> я клянусь он реально так называется
+        SpaceshipOperator, // <=> я клянусь он реально так называется   // [DONE]
 
         SubscriptOperator, // arr[0] и это не то же самое, что квадратные скобки...
-        SafeSubscriptOperator, // arr?[0] java moment
+        SafeSubscriptOperator, // arr?[0] java moment   // [DONE]
 
         MembershipOperator, // sth in collection
 
