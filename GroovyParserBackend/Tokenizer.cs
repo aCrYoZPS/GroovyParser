@@ -16,7 +16,7 @@ namespace GroovyParserBackend
             // a = obj.method() operand?
             // a = obj.method definetly operand
             // a = obj."I HATE THIS LANG" valid groovy code btw
-            TokenType type = TokenType.Identifier;
+            TokenType type = TokenType.None;
             for (int pos = 0; pos < sourceCode.Length; ++pos)
             {
                 var ch = sourceCode[pos];
@@ -36,8 +36,44 @@ namespace GroovyParserBackend
                         {
                             type = TokenType.NumberLiteral;
                         }
+                        value += ch;
                         break;
-                    // need to ask sth
+                    case '=':
+                        if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '=')
+                        {
+                            type = TokenType.Identical;
+                            pos += 2;
+                            tokens.Add(new Token
+                            {
+                                //maybe no hardcode?
+                                Value = "===",
+                                Type = type,
+                            });
+                        }
+                        else if (pos < sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            type = TokenType.Equal;
+                            pos += 1;
+                            tokens.Add(new Token
+                            {
+                                //maybe no hardcode?
+                                Value = "==",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.Assignment;
+                            tokens.Add(new Token
+                            {
+                                Value = "=",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        type = TokenType.None;
+                        value = string.Empty;
+                        break;
                     case '+':
                         //logically it cannot be the last symbol in a file but idk should we fall on ill-formed files
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
@@ -50,7 +86,6 @@ namespace GroovyParserBackend
                                 Value = "+=",
                                 Type = type,
                             });
-                            previousToken = type;
                         }
                         else if (previousToken == TokenType.StringLiteral || previousToken == TokenType.NumberLiteral || previousToken == TokenType.Identifier || previousToken == TokenType.FunctionCall)
                         {
@@ -61,8 +96,6 @@ namespace GroovyParserBackend
                                 Value = "+",
                                 Type = type,
                             });
-                            previousToken = type;
-
                         }
                         else
                         {
@@ -73,8 +106,10 @@ namespace GroovyParserBackend
                                 Value = "+",
                                 Type = type,
                             });
-                            previousToken = type;
                         }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
                         break;
                     case '.':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
@@ -88,11 +123,16 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
                             previousToken = type;
+                            type = TokenType.None;
                             value = string.Empty;
                         }
-                        else if (type != TokenType.NumberLiteral)
+                        else
                         {
-                            isMember = true;
+                            if (type != TokenType.NumberLiteral)
+                            {
+                                isMember = true;
+                            }
+                            value += ch;
                         }
                         break;
                     case '\'':
@@ -137,6 +177,7 @@ namespace GroovyParserBackend
 
                     case '\t':
                     case '\n':
+                    case '\r':
                     case ' ':
                         if (string.IsNullOrWhiteSpace(value))
                         {
@@ -146,13 +187,6 @@ namespace GroovyParserBackend
                         if (keywords.Contains(value) && !considerNextIdentifier)
                         {
                             type = TokenType.Keyword;
-                            // we can go 
-                            // def "null" {1}
-                            // this.null() // returns 1
-                            if (value == "def")
-                            {
-                                considerNextIdentifier = true;
-                            }
                         }
 
                         if (considerNextIdentifier)
@@ -167,19 +201,19 @@ namespace GroovyParserBackend
                             Type = type,
                         });
                         previousToken = type;
+                        type = TokenType.None;
+
+                        if (type == TokenType.Keyword && value == "def")
+                        {
+                            considerNextIdentifier = true;
+                        }
+                        value = string.Empty;
                         break;
 
                     default:
                         type = TokenType.Identifier;
+                        value += ch;
                         break;
-                }
-                if (string.IsNullOrWhiteSpace("" + ch))
-                {
-                    value = string.Empty;
-                }
-                else
-                {
-                    value += ch;
                 }
             }
             return tokens;
