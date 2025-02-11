@@ -2,6 +2,8 @@ namespace GroovyParserBackend.Entities
 {
     public enum TokenType
     {
+        None,
+
         NumberLiteral,
         StringLiteral,
 
@@ -15,8 +17,7 @@ namespace GroovyParserBackend.Entities
         Brackets, // {}
         Braces, // []
 
-        Equals,
-        DoubleEquals,
+        Equal, // ==
         GreaterThan,
         LessThan,
         GreaterOrEqual,
@@ -42,6 +43,7 @@ namespace GroovyParserBackend.Entities
         Or,
         Not,
 
+        Assignment,
         Plus,
         Minus,
         Star,
