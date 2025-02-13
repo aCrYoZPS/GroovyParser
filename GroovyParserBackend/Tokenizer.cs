@@ -39,6 +39,88 @@ namespace GroovyParserBackend
                         }
                         value += ch;
                         break;
+                    case '[':
+
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = value,
+                            });
+                        }
+
+                        var innearStr = string.Empty;
+                        while(pos != sourceCode.Length - 1 && sourceCode[pos + 1] != ']')
+                        {
+                            innearStr += sourceCode[++pos];
+                        }
+                        ++pos;
+                        var innearTokens = Tokenize(innearStr);
+                        tokens.AddRange(innearTokens);
+
+                        if (innearTokens.Count == 1 && innearTokens[0].Type == TokenType.NumberLiteral)
+                        {
+                            type = TokenType.SubscriptOperator;
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = "arr[]",
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.Braces;
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = "[]",
+                            });
+                        }
+
+                        previousToken = type;
+                        type = TokenType.None;
+                        value = string.Empty;
+                        break;
+
+                    case '{':
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = value,
+                            });
+                        }
+
+                        innearStr = string.Empty;
+                        var bracketsCounter = 1;
+                        while (pos != sourceCode.Length - 1 && bracketsCounter != 0)
+                        {
+                            innearStr += sourceCode[++pos];
+
+                            if (sourceCode[pos + 1] == '{')
+                                ++bracketsCounter;
+
+                            if (sourceCode[pos + 1] == '}')
+                                --bracketsCounter;                 
+                        }
+                        ++pos;
+                        innearTokens = Tokenize(innearStr);
+                        tokens.AddRange(innearTokens);
+
+                        type = TokenType.Brackets;
+                        tokens.Add(new Token()
+                        {
+                            Type = type,
+                            Value = "{}",
+                        });
+
+                        previousToken = type;
+                        type = TokenType.None;
+                        value = string.Empty;
+                        break;
+
                     case '=':
                         if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '=')
                         {
@@ -200,6 +282,65 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         type = TokenType.None;
                         break;
+                    case '&':
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '&')
+                        {
+                            pos++;
+                            type = TokenType.And;
+                            tokens.Add(new Token
+                            {
+                                Value = "&&",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.BitwiseAnd;
+                            tokens.Add(new Token
+                            {
+                                Value = "&",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '|':
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '|')
+                        {
+                            pos++;
+                            type = TokenType.Or;
+                            tokens.Add(new Token
+                            {
+                                Value = "||",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.BitwiseOr;
+                            tokens.Add(new Token
+                            {
+                                Value = "|",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '^':
+                        type = TokenType.BitwiseXor;
+                        tokens.Add(new Token
+                        {
+                            Value = "^",
+                            Type = type,
+                        });
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
                     case '?':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == ':')
                         {
@@ -231,7 +372,7 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
 
-                            var innearStr = String.Empty;
+                            innearStr = String.Empty;
                             while (pos != sourceCode.Length - 1 && sourceCode[pos] != ']')
                             {
                                 innearStr += sourceCode[pos++];
@@ -250,6 +391,38 @@ namespace GroovyParserBackend
                             value = string.Empty;
                             type = TokenType.None;
                         }
+                        break;
+                    case '!':
+                        if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '=')
+                        {
+                            pos += 2;
+                            type = TokenType.NotIdentical;
+                            tokens.Add(new Token
+                            {
+                                Type = type,
+                                Value = "!==",
+                            });
+                        }                        
+                        else if(pos!= sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.NotEqual;
+                            tokens.Add(new Token { 
+                                Type = type, 
+                                Value = "!=",
+                            });
+                        }
+                        else
+                        {
+                            tokens.Add(new Token
+                            {
+                                Type = TokenType.Not,
+                                Value = "!",
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
                         break;
                     case '.':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
