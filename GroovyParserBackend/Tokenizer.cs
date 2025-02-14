@@ -1,5 +1,4 @@
 using GroovyParserBackend.Entities;
-using System.ComponentModel;
 
 namespace GroovyParserBackend
 {
@@ -50,16 +49,16 @@ namespace GroovyParserBackend
                             });
                         }
 
-                        var innearStr = string.Empty;
-                        while(pos != sourceCode.Length - 1 && sourceCode[pos + 1] != ']')
+                        var innerStr = string.Empty;
+                        while (pos != sourceCode.Length - 1 && sourceCode[pos + 1] != ']')
                         {
-                            innearStr += sourceCode[++pos];
+                            innerStr += sourceCode[++pos];
                         }
                         ++pos;
-                        var innearTokens = Tokenize(innearStr);
-                        tokens.AddRange(innearTokens);
+                        var innerTokens = Tokenize(innerStr);
+                        tokens.AddRange(innerTokens);
 
-                        if (innearTokens.Count == 1 && innearTokens[0].Type == TokenType.NumberLiteral)
+                        if (innerTokens.Count == 1 && innerTokens[0].Type == TokenType.NumberLiteral || innerTokens[0].Type != TokenType.Identifier)
                         {
                             type = TokenType.SubscriptOperator;
                             tokens.Add(new Token()
@@ -93,21 +92,21 @@ namespace GroovyParserBackend
                             });
                         }
 
-                        innearStr = string.Empty;
+                        innerStr = string.Empty;
                         var bracketsCounter = 1;
                         while (pos != sourceCode.Length - 1 && bracketsCounter != 0)
                         {
-                            innearStr += sourceCode[++pos];
+                            innerStr += sourceCode[++pos];
 
                             if (sourceCode[pos + 1] == '{')
                                 ++bracketsCounter;
 
                             if (sourceCode[pos + 1] == '}')
-                                --bracketsCounter;                 
+                                --bracketsCounter;
                         }
                         ++pos;
-                        innearTokens = Tokenize(innearStr);
-                        tokens.AddRange(innearTokens);
+                        innerTokens = Tokenize(innerStr);
+                        tokens.AddRange(innerTokens);
 
                         type = TokenType.Brackets;
                         tokens.Add(new Token()
@@ -128,7 +127,7 @@ namespace GroovyParserBackend
                             pos += 2;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
+
                                 Value = "===",
                                 Type = type,
                             });
@@ -139,7 +138,7 @@ namespace GroovyParserBackend
                             pos += 1;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
+
                                 Value = "==",
                                 Type = type,
                             });
@@ -158,24 +157,54 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         break;
                     case '+':
-                        //logically it cannot be the last symbol in a file but idk should we fall on ill-formed files
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
                             type = TokenType.PlusAssignment;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
+
                                 Value = "+=",
                                 Type = type,
                             });
                         }
-                        else if (previousToken == TokenType.StringLiteral || previousToken == TokenType.NumberLiteral || previousToken == TokenType.Identifier || previousToken == TokenType.FunctionCall)
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '+')
+                        {
+                            if (type == TokenType.None || value == string.Empty)
+                            {
+                                pos++;
+                                type = TokenType.PrefixIncrement;
+                                tokens.Add(new Token
+                                {
+
+                                    Value = "++",
+                                    Type = type,
+                                });
+
+                            }
+                            else
+                            {
+                                pos++;
+                                tokens.Add(new Token
+                                {
+                                    Value = value,
+                                    Type = type,
+                                });
+                                type = TokenType.PostfixIncrement;
+                                tokens.Add(new Token
+                                {
+                                    Value = "++",
+                                    Type = type,
+                                });
+
+                            }
+                        }
+                        else if (IsOperand(previousToken))
                         {
                             type = TokenType.Plus;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
+
                                 Value = "+",
                                 Type = type,
                             });
@@ -185,7 +214,7 @@ namespace GroovyParserBackend
                             type = TokenType.UnaryPlus;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
+
                                 Value = "+",
                                 Type = type,
                             });
@@ -194,12 +223,80 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         type = TokenType.None;
                         break;
+                    case '-':
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.MinusAssignment;
+                            tokens.Add(new Token
+                            {
+
+                                Value = "-=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '-')
+                        {
+                            if (type == TokenType.None || value == string.Empty)
+                            {
+                                pos++;
+                                type = TokenType.PrefixDecrement;
+                                tokens.Add(new Token
+                                {
+
+                                    Value = "--",
+                                    Type = type,
+                                });
+
+                            }
+                            else
+                            {
+                                pos++;
+                                tokens.Add(new Token
+                                {
+                                    Value = value,
+                                    Type = type,
+                                });
+                                type = TokenType.PostfixDecrement;
+                                tokens.Add(new Token
+                                {
+                                    Value = "--",
+                                    Type = type,
+                                });
+
+                            }
+                        }
+                        else if (IsOperand(previousToken))
+                        {
+                            type = TokenType.Minus;
+                            tokens.Add(new Token
+                            {
+
+                                Value = "-",
+                                Type = type,
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.UnaryMinus;
+                            tokens.Add(new Token
+                            {
+
+                                Value = "-",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
                     case '>':
-                        if (pos != sourceCode.Length -2 && sourceCode[pos + 1] == '>' && sourceCode[pos + 2] == '>')
+                        if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '>' && sourceCode[pos + 2] == '>')
                         {
                             pos += 2;
                             type = TokenType.UnsignedRightShift;
-                            tokens.Add(new Token {
+                            tokens.Add(new Token
+                            {
                                 Value = ">>>",
                                 Type = type,
                             });
@@ -258,7 +355,7 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
                         }
-                        else if (pos != sourceCode.Length -1 && sourceCode[pos+1] == '<')
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '<')
                         {
                             pos++;
                             type = TokenType.LeftShift;
@@ -372,13 +469,13 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
 
-                            innearStr = String.Empty;
+                            innerStr = string.Empty;
                             while (pos != sourceCode.Length - 1 && sourceCode[pos] != ']')
                             {
-                                innearStr += sourceCode[pos++];
+                                innerStr += sourceCode[pos++];
                             }
 
-                            var tokenList = Tokenize(innearStr);
+                            var tokenList = Tokenize(innerStr);
                             tokens.AddRange(tokenList);
 
                             type = TokenType.SafeSubscriptOperator;
@@ -402,13 +499,14 @@ namespace GroovyParserBackend
                                 Type = type,
                                 Value = "!==",
                             });
-                        }                        
-                        else if(pos!= sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
                             type = TokenType.NotEqual;
-                            tokens.Add(new Token { 
-                                Type = type, 
+                            tokens.Add(new Token
+                            {
+                                Type = type,
                                 Value = "!=",
                             });
                         }
@@ -431,7 +529,6 @@ namespace GroovyParserBackend
                             type = TokenType.RangeOperator;
                             tokens.Add(new Token
                             {
-                                //maybe no hardcode?
                                 Value = "..",
                                 Type = type,
                             });
@@ -487,7 +584,7 @@ namespace GroovyParserBackend
                         }
                         break;
 
-
+                    case ';':
                     case '\t':
                     case '\n':
                     case '\r':
@@ -520,6 +617,10 @@ namespace GroovyParserBackend
                         {
                             considerNextIdentifier = true;
                         }
+                        if (ch == '\n' || ch == '\r' || ch == ';')
+                        {
+                            previousToken = TokenType.None;
+                        }
                         value = string.Empty;
                         break;
 
@@ -539,7 +640,7 @@ namespace GroovyParserBackend
             }
             return tokens;
         }
-        public static List<string> keywords = new List<string>(){
+        public static readonly List<string> keywords = new List<string>(){
             "abstract", "assert", "break", "case", "catch",
             "class", "const", "continue", "def", "default", "do", "else",
             "enum", "extends", "final", "finally", "for", "goto", "if",
@@ -548,5 +649,17 @@ namespace GroovyParserBackend
             "return", "static", "strictfp", "super", "switch", "synchronized",
             "this", "threadsafe", "throw", "throws", "transient", "try", "while",
         };
+
+        public static readonly List<TokenType> operandTypes = new List<TokenType>(){
+            TokenType.NumberLiteral, TokenType.StringLiteral, TokenType.Identifier,
+            TokenType.FunctionCall, TokenType.Parentheses, TokenType.Braces,
+            TokenType.PostfixDecrement, TokenType.PostfixIncrement, TokenType.SubscriptOperator,
+            TokenType.SafeSubscriptOperator
+        };
+
+        private static bool IsOperand(TokenType type)
+        {
+            return operandTypes.Contains(type);
+        }
     }
 }
