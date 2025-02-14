@@ -14,6 +14,7 @@ namespace GroovyParserBackend.Entities
 
         TypeAnnotation,
 
+        Parentheses,
         Brackets, // {}
         Braces, // []
 
@@ -44,27 +45,27 @@ namespace GroovyParserBackend.Entities
         Not,
 
         Assignment,
-        Plus,
-        Minus,
+        Plus, // [DONE]
+        Minus, // [DONE]
         Star,
         Slash,
         Percent,
         DoubleStar,
 
-        PlusAssignment,
-        MinusAssignment,
+        PlusAssignment, // [DONE]
+        MinusAssignment, // [DONE]
         StarAssignment,
         SlashAssignment,
         PercentAssignment,
         DoubleStarAssignment,
 
-        UnaryPlus,
-        UnaryMinus,
+        UnaryPlus, // [DONE]
+        UnaryMinus, // [DONE]
 
-        PrefixIncrement,
-        PrefixDecrement,
-        PostfixIncrement,
-        PostfixDecrement,
+        PrefixIncrement, // [DONE]
+        PrefixDecrement, // [DONE]
+        PostfixIncrement, // [DONE]
+        PostfixDecrement, // [DONE]
 
         MemberAccess, // obj
         NullSafeMemberAccess, // obj.?member
