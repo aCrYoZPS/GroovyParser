@@ -93,22 +93,27 @@ namespace GroovyParserBackend
                             });
                         }
 
-                        innerStr = string.Empty;
-                        var bracesCounter = 1;
-                        while (pos != sourceCode.Length - 1 && bracesCounter != 0)
+                        if (sourceCode[pos + 1] != '}')
                         {
-                            innerStr += sourceCode[++pos];
 
-                            if (sourceCode[pos + 1] == '{')
-                                ++bracesCounter;
+                            innerStr = string.Empty;
+                            var bracesCounter = 1;
 
-                            if (sourceCode[pos + 1] == '}')
-                                --bracesCounter;
+                            while (pos != sourceCode.Length - 1 && bracesCounter != 0)
+                            {
+                                innerStr += sourceCode[++pos];
+
+                                if (sourceCode[pos + 1] == '{')
+                                    ++bracesCounter;
+
+                                if (sourceCode[pos + 1] == '}')
+                                    --bracesCounter;
+                            }
+                            innerTokens = Tokenize(innerStr);
+                            tokens.AddRange(innerTokens);
                         }
-                        ++pos;
-                        innerTokens = Tokenize(innerStr);
-                        tokens.AddRange(innerTokens);
 
+                        ++pos;
                         type = TokenType.Braces;
                         tokens.Add(new Token()
                         {
@@ -355,25 +360,13 @@ namespace GroovyParserBackend
                         }
                         else
                         {
-                            if(previousToken == TokenType.LessThan) // && sourseCode[pos-1] == "<" ?????
+                            type = TokenType.GreaterThan;
+                            tokens.Add(new Token
                             {
-                                type = TokenType.DiamondOperator;
-                                tokens.Remove(tokens.Last());
-                                tokens.Add(new Token
-                                {
-                                    Value = "<>",
-                                    Type = type,
-                                });
-                            }
-                            else
-                            {
-                                type = TokenType.GreaterThan;
-                                tokens.Add(new Token
-                                {
-                                    Value = ">",
-                                    Type = type,
-                                });
-                            }
+                                Value = ">",
+                                Type = type,
+                            });
+
                         }
                         previousToken = type;
                         value = string.Empty;
@@ -407,6 +400,16 @@ namespace GroovyParserBackend
                             tokens.Add(new Token
                             {
                                 Value = "<<",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '>')
+                        {
+                            pos++;
+                            type = TokenType.DiamondOperator;
+                            tokens.Add(new Token
+                            {
+                                Value = "<>",
                                 Type = type,
                             });
                         }
