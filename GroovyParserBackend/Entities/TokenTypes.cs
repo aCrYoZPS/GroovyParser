@@ -5,16 +5,16 @@ namespace GroovyParserBackend.Entities
         None,
 
         NumberLiteral, // [DONE]
-        StringLiteral,
+        StringLiteral, // [DONE]
 
-        Identifier,
+        Identifier, //[DONE]
         Keyword,        // [DONE]
 
-        FunctionCall, // () )))
+        FunctionCall, // [DONE]
 
-        TypeAnnotation,
+        TypeAnnotation, // isn't needed
 
-        Parentheses,
+        Parentheses,    // [DONE]
         Brackets,       // [DONE]
         Braces,         // [DONE]
 
@@ -44,20 +44,20 @@ namespace GroovyParserBackend.Entities
         Or,     // [DONE]
         Not,    // [DONE]
 
-        Assignment, // 
+        Assignment, // [DONE]
         Plus, // [DONE]
         Minus, // [DONE]
-        Star,
-        Slash,
-        Percent,
-        DoubleStar,
+        Star,// [DONE]
+        Slash,// [DONE]
+        Percent,// [DONE]
+        DoubleStar,// [DONE]
 
         PlusAssignment, // [DONE]
         MinusAssignment, // [DONE]
-        StarAssignment,
-        SlashAssignment,
-        PercentAssignment,
-        DoubleStarAssignment,
+        StarAssignment,// [DONE]
+        SlashAssignment,// [DONE]
+        PercentAssignment,// [DONE]
+        DoubleStarAssignment,// [DONE]
 
         UnaryPlus, // [DONE]
         UnaryMinus, // [DONE]
