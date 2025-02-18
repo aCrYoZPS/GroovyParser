@@ -1,2 +1,1 @@
-code{text}
-aaa{}
+a."A GOOD MEMBER"

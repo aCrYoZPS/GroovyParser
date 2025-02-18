@@ -38,6 +38,58 @@ namespace GroovyParserBackend
                         }
                         value += ch;
                         break;
+                    case ',':
+                        tokens.Add(new Token
+                        {
+                            Value = value,
+                            Type = type,
+                        });
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '(':
+                        if (type == TokenType.Identifier)
+                        {
+                            type = TokenType.FunctionCall;
+                            if (considerNextIdentifier)
+                            {
+                                type = TokenType.Identifier;
+                                considerNextIdentifier = false;
+                            }
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = value + "()",
+                            });
+                        }
+                        else
+                        {
+                            type = TokenType.Parentheses;
+                            tokens.Add(new Token()
+                            {
+                                Type = type,
+                                Value = "()",
+                            });
+                        }
+
+                        pos++;
+                        var innerStr = string.Empty;
+
+                        while (sourceCode[pos] != ')')
+                        {
+                            innerStr += sourceCode[pos];
+                            pos++;
+                        }
+
+                        var innerTokens = Tokenize(innerStr);
+                        tokens.AddRange(innerTokens);
+
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+
+                        break;
                     case '[':
 
                         if (value != string.Empty)
@@ -49,14 +101,13 @@ namespace GroovyParserBackend
                             });
                         }
 
-                        var innerStr = string.Empty;
+                        innerStr = string.Empty;
                         while (pos != sourceCode.Length - 1 && sourceCode[pos + 1] != ']')
                         {
                             innerStr += sourceCode[++pos];
                         }
                         ++pos;
-                        var innerTokens = Tokenize(innerStr);
-                        tokens.AddRange(innerTokens);
+                        innerTokens = Tokenize(innerStr);
 
                         if ((innerTokens.Count == 1 && innerTokens[0].Type == TokenType.NumberLiteral)
                             || (innerTokens.Count == 3 && innerTokens[1].Type == TokenType.RangeOperator))
@@ -65,7 +116,7 @@ namespace GroovyParserBackend
                             tokens.Add(new Token()
                             {
                                 Type = type,
-                                Value = "arr[]",
+                                Value = $"{value}[]",
                             });
                         }
                         else
@@ -77,6 +128,8 @@ namespace GroovyParserBackend
                                 Value = "[]",
                             });
                         }
+
+                        tokens.AddRange(innerTokens);
 
                         previousToken = type;
                         type = TokenType.None;
@@ -92,10 +145,9 @@ namespace GroovyParserBackend
                                 Value = value,
                             });
                         }
-
+                        innerTokens = new List<Token>();
                         if (sourceCode[pos + 1] != '}')
                         {
-
                             innerStr = string.Empty;
                             var bracesCounter = 1;
 
@@ -121,12 +173,22 @@ namespace GroovyParserBackend
                             Value = "{}",
                         });
 
+                        tokens.AddRange(innerTokens);
+
                         previousToken = type;
                         type = TokenType.None;
                         value = string.Empty;
                         break;
 
                     case '=':
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                        }
                         if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '=')
                         {
                             type = TokenType.Identical;
@@ -181,6 +243,14 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         break;
                     case '+':
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                        }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
@@ -248,6 +318,14 @@ namespace GroovyParserBackend
                         type = TokenType.None;
                         break;
                     case '-':
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                        }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
@@ -315,17 +393,103 @@ namespace GroovyParserBackend
                         type = TokenType.None;
                         break;
                     case '*':
-                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
+                        if (value != string.Empty)
                         {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                        }
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.StarAssignment;
+                            tokens.Add(new Token
+                            {
+                                Value = "*=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '*')
+                        {
+                            pos++;
+                            type = TokenType.DoubleStar;
+                            tokens.Add(new Token
+                            {
+                                Value = "**",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
+                        {
+                            pos++;
                             type = TokenType.SpreadOperator;
                             tokens.Add(new Token
                             {
                                 Value = "*.",
                                 Type = type,
                             });
-                            value += ch;
-                            value += sourceCode[++pos];
+                            break;
                         }
+                        else
+                        {
+                            type = TokenType.Star;
+                            tokens.Add(new Token
+                            {
+                                Value = "*",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
+                        break;
+                    case '/':
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                        }
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        {
+                            pos++;
+                            type = TokenType.SlashAssignment;
+                            tokens.Add(new Token
+                            {
+                                Value = "/=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '*')
+                        {
+                            while (pos != sourceCode.Length - 1 && (sourceCode[pos - 1] != '*' || sourceCode[pos] != '/'))
+                            {
+                                pos++;
+                            }
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '/')
+                        {
+                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != '\n')
+                            {
+                                pos++;
+                            }
+                        }
+                        else
+                        {
+                            type = TokenType.Slash;
+                            tokens.Add(new Token
+                            {
+                                Value = "/",
+                                Type = type,
+                            });
+                        }
+                        previousToken = type;
+                        value = string.Empty;
+                        type = TokenType.None;
                         break;
                     case '>':
                         if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '>' && sourceCode[pos + 2] == '>')
@@ -571,9 +735,9 @@ namespace GroovyParserBackend
                         type = TokenType.None;
                         break;
                     case '~':
-                        if(pos != sourceCode.Length - 1 && (sourceCode[pos + 1] == '"' || sourceCode[pos + 1] == '$' || sourceCode[pos + 1] == 39))
+                        if (pos != sourceCode.Length - 1 && (sourceCode[pos + 1] == '"' || sourceCode[pos + 1] == '$' || sourceCode[pos + 1] == 39))
                         {
-                            
+
                             type = TokenType.PatternOperator;
                             tokens.Add(new Token
                             {
@@ -655,43 +819,59 @@ namespace GroovyParserBackend
                         break;
                     case '\'':
                     case '"':
+                        type = TokenType.StringLiteral;
                         if (isMember)
                         {
-                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != ch)
-                            {
-                                value += sourceCode[pos];
-                            }
-                            value += sourceCode[pos];
                             type = TokenType.Identifier;
                         }
-                        else
+                        innerTokens = new List<Token>();
+                        value += sourceCode[pos];
+                        pos++;
+                        while (pos != sourceCode.Length - 1 && sourceCode[pos] != ch)
                         {
-                            pos++;
-                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != ch)
+                            value += sourceCode[pos];
+                            if (sourceCode[pos] == '$')
                             {
-                                value += sourceCode[pos];
-                            }
-                            type = TokenType.StringLiteral;
-                        }
-                        break;
-                    //ignore single-line and multiline comments
-                    case '/':
-                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '*')
-                        {
-                            while ((ch != '*' || sourceCode[pos + 1] != '/') && pos != sourceCode.Length - 2)
-                            {
-                                pos++;
-                            }
-                        }
-                        else
-                        {
-                            while (ch != '\n' && pos != sourceCode.Length - 1)
-                            {
-                                pos++;
-                            }
-                        }
-                        break;
+                                var interpolationPos = pos + 1;
+                                var delim = ' ';
+                                if (sourceCode[pos + 1] == '{')
+                                {
+                                    delim = '}';
+                                }
 
+                                var interpolationValue = string.Empty;
+                                while (interpolationPos != sourceCode.Length - 1 && sourceCode[interpolationPos] != delim && sourceCode[interpolationPos] != ch)
+                                {
+                                    interpolationValue += sourceCode[interpolationPos];
+                                    interpolationPos++;
+                                }
+                                innerTokens = Tokenize(interpolationValue);
+                            }
+                            pos++;
+                        }
+                        value += sourceCode[pos];
+
+                        if (considerNextIdentifier)
+                        {
+                            type = TokenType.Identifier;
+                            if (sourceCode[pos + 1] != '(')
+                            {
+                                considerNextIdentifier = false;
+                            }
+                        }
+                        else
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+                            tokens.AddRange(innerTokens);
+                            previousToken = type;
+                            type = TokenType.None;
+                            value = string.Empty;
+                        }
+                        break;
                     case ';':
                     case '\t':
                     case '\n':
@@ -723,17 +903,13 @@ namespace GroovyParserBackend
                             Value = value,
                             Type = type,
                         });
-                        previousToken = type;
-                        type = TokenType.None;
 
                         if (type == TokenType.Keyword && value == "def")
                         {
                             considerNextIdentifier = true;
                         }
-                        if (ch == '\n' || ch == '\r' || ch == ';')
-                        {
-                            previousToken = TokenType.None;
-                        }
+                        previousToken = type;
+                        type = TokenType.None;
                         value = string.Empty;
                         break;
 
