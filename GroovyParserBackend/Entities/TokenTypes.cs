@@ -8,41 +8,41 @@ namespace GroovyParserBackend.Entities
         StringLiteral,
 
         Identifier,
-        Keyword,
+        Keyword,        // [DONE]
 
         FunctionCall, // () )))
 
         TypeAnnotation,
 
         Parentheses,
-        Brackets, // {}
-        Braces, // []
+        Brackets,       // [DONE]
+        Braces,         // [DONE]
 
-        Equal, // ==
+        Equal,          // [DONE]
         GreaterThan,    // [DONE]
         LessThan,       // [DONE]
         GreaterOrEqual, // [DONE]
         LessOrEqual,    // [DONE]
-        NotEqual,
-        Identical, // === ))))))))
-        NotIdentical, // !==))))))
+        NotEqual,       // [DONE]
+        Identical,      // [DONE]
+        NotIdentical,   // [DONE]
 
         TernaryOperator,
 
-        ElvisOperator,  // [DONE] sth ?: sth_other
-        ElvisAssignment,// [DONE] sth ?= sth_other
+        ElvisOperator,  // [DONE] 
+        ElvisAssignment,// [DONE] 
 
-        BitwiseAnd,
-        BitwiseOr,
-        BitwiseNot,
-        BitwiseXor,
-        LeftShift,      // [DONE] <<
-        RightShift,     // [DONE] >>
-        UnsignedRightShift, // [DONE] >>>
+        BitwiseAnd,     // [DONE]
+        BitwiseOr,      // [DONE]
+        BitwiseNot,     // [DONE]
+        BitwiseXor,     // [DONE]
+        LeftShift,      // [DONE] 
+        RightShift,     // [DONE] 
+        UnsignedRightShift, // [DONE] 
 
-        And,
-        Or,
-        Not,
+        And,    // [DONE]
+        Or,     // [DONE]
+        Not,    // [DONE]
 
         Assignment, // 
         Plus, // [DONE]
@@ -67,27 +67,27 @@ namespace GroovyParserBackend.Entities
         PostfixIncrement, // [DONE]
         PostfixDecrement, // [DONE]
 
-        MemberAccess, // obj
-        NullSafeMemberAccess, // obj.?member
-        MethodPointer, // obj.&method
+        MemberAccess,           // [DONE]
+        NullSafeMemberAccess,   // [DONE]
+        MethodPointer,          // ?????????????????  sth.&method
 
-        PatternOperator, // ~sth
-        FindOperator, // =~ come and save us...
-        MatchOperator, // ==~ сука не заебло же их хуярить операторы
+        PatternOperator,    // [DONE]
+        FindOperator,       // [DONE]
+        MatchOperator,      // [DONE]
 
-        SpreadOperator, // collection*.method
+        SpreadOperator,     // [DONE]
 
         RangeOperator, // 1..5 or 'a'..'z'... damn... 
 
-        SpaceshipOperator, // <=> я клянусь он реально так называется   // [DONE]
+        SpaceshipOperator,  // [DONE]
 
-        SubscriptOperator, // arr[0] и это не то же самое, что квадратные скобки...
-        SafeSubscriptOperator, // arr?[0] java moment   // [DONE]
+        SubscriptOperator,     // [DONE]
+        SafeSubscriptOperator, // [DONE]
 
-        MembershipOperator, // sth in collection
+        MembershipOperator, // [DONE]
 
-        CoercionOperation, // sth as String
+        CoercionOperation,  // [DONE]
 
-        DiamondOperator, // <> as in List<Integer> list = new List<>()
+        DiamondOperator, // ???????????????????????
     }
 }
