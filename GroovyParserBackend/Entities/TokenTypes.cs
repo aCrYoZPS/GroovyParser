@@ -4,7 +4,7 @@ namespace GroovyParserBackend.Entities
     {
         None,
 
-        NumberLiteral,
+        NumberLiteral, // [DONE]
         StringLiteral,
 
         Identifier,
@@ -44,7 +44,7 @@ namespace GroovyParserBackend.Entities
         Or,
         Not,
 
-        Assignment,
+        Assignment, // 
         Plus, // [DONE]
         Minus, // [DONE]
         Star,
@@ -77,7 +77,7 @@ namespace GroovyParserBackend.Entities
 
         SpreadOperator, // collection*.method
 
-        RangeOperator, // 1..5 or 'a'..'z'... damn...
+        RangeOperator, // 1..5 or 'a'..'z'... damn... 
 
         SpaceshipOperator, // <=> я клянусь он реально так называется   // [DONE]
 
