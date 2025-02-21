@@ -850,12 +850,16 @@ namespace GroovyParserBackend
                                 }
                                 innerTokens = Tokenize(interpolationValue);
                                 tokens.AddRange(innerTokens);
-                                pos = interpolationPos - 1;
-                                value += interpolationValue;
-                            }
-                            pos++;
+                                pos += interpolationPos - 2);
+            value += interpolationValue;
+            if (delim == ' ')
+            {
+                value += delim;
+            }
+        }
+        pos++;
                         }
-                        value += sourceCode[pos];
+    value += sourceCode[pos];
 
                         if (considerNextIdentifier)
                         {
@@ -866,77 +870,77 @@ namespace GroovyParserBackend
                             }
                         }
                         else
-                        {
-                            tokens.Add(new Token
-                            {
-                                Value = value,
-                                Type = type,
-                            });
-                            previousToken = type;
-                            type = TokenType.None;
-                            value = string.Empty;
-                        }
-                        break;
+{
+    tokens.Add(new Token
+    {
+        Value = value,
+        Type = type,
+    });
+    previousToken = type;
+    type = TokenType.None;
+    value = string.Empty;
+}
+break;
                     case ';':
-                    case '\t':
-                    case '\n':
-                    case '\r':
-                    case ' ':
-                        if (string.IsNullOrWhiteSpace(value))
-                        {
-                            break;
-                        }
-                        //check for keyword
-                        if (keywords.Contains(value) && !considerNextIdentifier)
-                        {
-                            type = TokenType.Keyword;
-                        }
+case '\t':
+case '\n':
+case '\r':
+case ' ':
+    if (string.IsNullOrWhiteSpace(value))
+    {
+        break;
+    }
+    //check for keyword
+    if (keywords.Contains(value) && !considerNextIdentifier)
+    {
+        type = TokenType.Keyword;
+    }
 
-                        if (specialOperators.Contains(value))
-                        {
-                            type = value == "as" ? TokenType.CoercionOperation : TokenType.MembershipOperator;
-                        }
+    if (specialOperators.Contains(value))
+    {
+        type = value == "as" ? TokenType.CoercionOperation : TokenType.MembershipOperator;
+    }
 
-                        if (considerNextIdentifier)
-                        {
-                            type = TokenType.Identifier;
-                            considerNextIdentifier = false;
-                        }
+    if (considerNextIdentifier)
+    {
+        type = TokenType.Identifier;
+        considerNextIdentifier = false;
+    }
 
-                        tokens.Add(new Token
-                        {
-                            Value = value,
-                            Type = type,
-                        });
+    tokens.Add(new Token
+    {
+        Value = value,
+        Type = type,
+    });
 
-                        if (type == TokenType.Keyword && value == "def")
-                        {
-                            considerNextIdentifier = true;
-                        }
-                        previousToken = type;
-                        type = TokenType.None;
-                        value = string.Empty;
-                        break;
+    if (type == TokenType.Keyword && value == "def")
+    {
+        considerNextIdentifier = true;
+    }
+    previousToken = type;
+    type = TokenType.None;
+    value = string.Empty;
+    break;
 
-                    default:
+default:
 
-                        if (previousToken == TokenType.MethodPointer)
-                            break;
+    if (previousToken == TokenType.MethodPointer)
+        break;
 
-                        type = TokenType.Identifier;
-                        value += ch;
-                        break;
-                }
+    type = TokenType.Identifier;
+    value += ch;
+    break;
+}
             }
             if (value != string.Empty)
-            {
-                tokens.Add(new Token
-                {
-                    Value = value,
-                    Type = type,
-                });
-            }
-            return tokens;
+{
+    tokens.Add(new Token
+    {
+        Value = value,
+        Type = type,
+    });
+}
+return tokens;
         }
         public static readonly List<string> keywords = new List<string>(){
             "abstract", "assert", "break", "case", "catch",
@@ -948,19 +952,19 @@ namespace GroovyParserBackend
             "this", "threadsafe", "throw", "throws", "transient", "try", "while",
         };
 
-        public static readonly List<string> specialOperators = new List<string>()
+public static readonly List<string> specialOperators = new List<string>()
         { "in", "as", };
 
-        public static readonly List<TokenType> operandTypes = new List<TokenType>(){
+public static readonly List<TokenType> operandTypes = new List<TokenType>(){
             TokenType.NumberLiteral, TokenType.StringLiteral, TokenType.Identifier,
             TokenType.FunctionCall, TokenType.Parentheses, TokenType.Braces,
             TokenType.PostfixDecrement, TokenType.PostfixIncrement, TokenType.SubscriptOperator,
             TokenType.SafeSubscriptOperator
         };
 
-        private static bool IsOperand(TokenType type)
-        {
-            return operandTypes.Contains(type);
-        }
+private static bool IsOperand(TokenType type)
+{
+    return operandTypes.Contains(type);
+}
     }
 }
