@@ -834,9 +834,10 @@ namespace GroovyParserBackend
                             {
                                 var interpolationPos = pos + 1;
                                 var delim = ' ';
-                                if (sourceCode[pos + 1] == '{')
+                                if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '{')
                                 {
                                     delim = '}';
+                                    interpolationPos++;
                                 }
 
                                 var interpolationValue = string.Empty;
@@ -846,6 +847,7 @@ namespace GroovyParserBackend
                                     interpolationPos++;
                                 }
                                 innerTokens = Tokenize(interpolationValue);
+                                pos += interpolationPos;
                             }
                             pos++;
                         }
