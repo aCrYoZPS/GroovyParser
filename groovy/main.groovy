@@ -1,2 +1,4 @@
-"${I1, I2}"
-"$I3.a n"
+(true)? A:B
+(true)? C : D
+(true)? E :F
+(a + b)? X: Y

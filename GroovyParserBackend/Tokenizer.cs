@@ -650,6 +650,20 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         type = TokenType.None;
                         break;
+                    case ':':
+                        if (type != TokenType.None)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = type,
+                            });
+
+                            previousToken = type;
+                            type = TokenType.None;
+                            value = string.Empty;
+                        }
+                        break;
                     case '?':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == ':')
                         {
@@ -699,6 +713,16 @@ namespace GroovyParserBackend
                             previousToken = type;
                             value = string.Empty;
                             type = TokenType.None;
+                        }
+                        else
+                        {
+                            type = TokenType.TernaryOperator;
+                            tokens.Add(new Token
+                            {
+                                Value = "cond? obj:obj",
+                                Type = type,
+                            });
+
                         }
                         break;
                     case '!':
@@ -824,7 +848,6 @@ namespace GroovyParserBackend
                         {
                             type = TokenType.Identifier;
                         }
-                        innerTokens = new List<Token>();
                         value += sourceCode[pos];
                         pos++;
                         while (pos != sourceCode.Length - 1 && sourceCode[pos] != ch)
