@@ -10,6 +10,8 @@ namespace GroovyParserBackend
             var value = string.Empty;
             var considerNextIdentifier = false;
             var isMember = false;
+            var isTripleQuotes = false;
+            var isIfFor = false;
             TokenType previousToken = TokenType.None;
             // maybe need to implement some rvalue/lvalue distinctions to distinguish between
             // obj.method() operator
@@ -48,7 +50,14 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         type = TokenType.None;
                         break;
+                    case ')':
+                        break;
                     case '(':
+                        if (isIfFor)
+                        {
+                            isIfFor = false;
+                            break;
+                        }
                         if (type == TokenType.Identifier)
                         {
                             type = TokenType.FunctionCall;
@@ -173,8 +182,6 @@ namespace GroovyParserBackend
                             Value = "{}",
                         });
 
-                        tokens.AddRange(innerTokens);
-
                         previousToken = type;
                         type = TokenType.None;
                         value = string.Empty;
@@ -243,14 +250,6 @@ namespace GroovyParserBackend
                         value = string.Empty;
                         break;
                     case '+':
-                        if (value != string.Empty)
-                        {
-                            tokens.Add(new Token
-                            {
-                                Value = value,
-                                Type = type,
-                            });
-                        }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
@@ -264,6 +263,7 @@ namespace GroovyParserBackend
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '+')
                         {
+                            previousToken = type;
                             if (type == TokenType.None || value == string.Empty)
                             {
                                 pos++;
@@ -279,11 +279,6 @@ namespace GroovyParserBackend
                             else
                             {
                                 pos++;
-                                tokens.Add(new Token
-                                {
-                                    Value = value,
-                                    Type = type,
-                                });
                                 type = TokenType.PostfixIncrement;
                                 tokens.Add(new Token
                                 {
@@ -293,7 +288,7 @@ namespace GroovyParserBackend
 
                             }
                         }
-                        else if (IsOperand(previousToken))
+                        else if (IsOperand(type) || IsOperand(previousToken))
                         {
                             type = TokenType.Plus;
                             tokens.Add(new Token
@@ -308,12 +303,18 @@ namespace GroovyParserBackend
                             type = TokenType.UnaryPlus;
                             tokens.Add(new Token
                             {
-
                                 Value = "+",
                                 Type = type,
                             });
                         }
-                        previousToken = type;
+                        if (value != string.Empty)
+                        {
+                            tokens.Add(new Token
+                            {
+                                Value = value,
+                                Type = previousToken,
+                            });
+                        }
                         value = string.Empty;
                         type = TokenType.None;
                         break;
@@ -325,6 +326,18 @@ namespace GroovyParserBackend
                                 Value = value,
                                 Type = type,
                             });
+                        }
+                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '>')
+                        {
+                            pos++;
+                            type = TokenType.ClosureOperator;
+                            tokens.Add(new Token
+                            {
+
+                                Value = "->",
+                                Type = type,
+                            });
+                            break;
                         }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
@@ -785,6 +798,14 @@ namespace GroovyParserBackend
                     case '.':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
                         {
+                            if (value != string.Empty)
+                            {
+                                tokens.Add(new Token
+                                {
+                                    Value = value,
+                                    Type = type,
+                                });
+                            }
                             pos++;
                             type = TokenType.RangeOperator;
                             tokens.Add(new Token
@@ -844,6 +865,11 @@ namespace GroovyParserBackend
                     case '\'':
                     case '"':
                         type = TokenType.StringLiteral;
+                        if (pos != sourceCode.Length - 3 && sourceCode[pos + 1] == ch && sourceCode[pos + 2] == ch)
+                        {
+                            pos += 2;
+                            isTripleQuotes = true;
+                        }
                         if (isMember)
                         {
                             type = TokenType.Identifier;
@@ -899,6 +925,11 @@ namespace GroovyParserBackend
                             type = TokenType.None;
                             value = string.Empty;
                         }
+                        if (isTripleQuotes)
+                        {
+                            isTripleQuotes = false;
+                            pos += 2;
+                        }
                         break;
                     case ';':
                     case '\t':
@@ -936,9 +967,26 @@ namespace GroovyParserBackend
                         {
                             considerNextIdentifier = true;
                         }
+                        if (type == TokenType.Keyword && (value == "for" || value == "if"))
+                        {
+                            isIfFor = true;
+                        }
                         previousToken = type;
                         type = TokenType.None;
                         value = string.Empty;
+
+                        if ((ch == ';' || ch == '\r') && previousToken != TokenType.Braces)
+                        {
+                            if (ch == ';' && pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '\r')
+                            {
+                                pos += 2;
+                            }
+                            tokens.Add(new Token
+                            {
+                                Type = TokenType.Delimiter,
+                                Value = (ch == ';') ? ch.ToString() : "newline",
+                            });
+                        }
                         break;
 
                     default:
