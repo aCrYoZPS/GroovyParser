@@ -1,0 +1,26 @@
+[33mcommit 0d70c52b71d48fbc286bd9afa524bbfa6a9d43ee[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32moperators-bellow-member-access[m[33m, [m[1;31morigin/operators-bellow-member-access[m[33m)[m
+Author: KatiaShauro <katia.shauro2@gmail.com>
+Date:   Sun Feb 16 23:00:43 2025 +0300
+
+    some fixes
+
+[33mcommit b962d385cb1ae5b5845dbae662cf160d5706cb32[m
+Author: KatiaShauro <katia.shauro2@gmail.com>
+Date:   Sat Feb 15 00:46:08 2025 +0300
+
+    All operators below member access
+
+[33mcommit 10dc820aa16a3648f47a096cfc725008478b842a[m
+Merge: 79f4878 27f43e6
+Author: Mikhail Petrachenka <77238687+aCrYoZPS@users.noreply.github.com>
+Date:   Fri Feb 14 11:48:14 2025 +0300
+
+    Merge pull request #4 from aCrYoZPS/plus_minus_operators
+    
+    plus and minus operations (unary, binary, and in(de)crement)
+
+[33mcommit 27f43e681612fa74f5cc6059b2c382fe6ce317c9[m
+Author: aCrYoZ <acryozps@gmail.com>
+Date:   Fri Feb 14 11:46:46 2025 +0300
+
+    plus and minus operations (unary, binary, and in(de)crement)

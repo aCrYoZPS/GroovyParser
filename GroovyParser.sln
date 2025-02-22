@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroovyParserBackend", "Groo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroovyParserCLI", "GroovyParserCLI\GroovyParserCLI.csproj", "{55FD8B76-9D1F-4738-9053-DFAA9E3B3FE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserInterface", "ParserInterface\ParserInterface.csproj", "{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,11 @@ Global
 		{55FD8B76-9D1F-4738-9053-DFAA9E3B3FE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55FD8B76-9D1F-4738-9053-DFAA9E3B3FE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55FD8B76-9D1F-4738-9053-DFAA9E3B3FE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF72F1A-1CD8-4FF1-B78B-3AD2F8E200F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
