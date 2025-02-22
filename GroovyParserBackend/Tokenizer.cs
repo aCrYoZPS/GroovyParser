@@ -1029,7 +1029,7 @@ namespace GroovyParserBackend
             TokenType.SafeSubscriptOperator
         };
 
-        private static bool IsOperand(TokenType type)
+        public static bool IsOperand(TokenType type)
         {
             return operandTypes.Contains(type);
         }
