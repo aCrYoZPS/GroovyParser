@@ -4,11 +4,12 @@ namespace GroovyParserBackend.Entities
     {
         public TokenType Type { get; set; }
         public string Value { get; set; } = string.Empty;
+        public List<Token> elseIfSequence = new List<Token>();
 
         public override string ToString()
         {
-           //return $"Token Type: {this.Type}\nToken Value: {this.Value}";
-           return this.Value;
+            return $"Token Type: {this.Type}\nToken Value: {this.Value}";
+            // return this.Value;
         }
 
         public override bool Equals(object obj)

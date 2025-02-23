@@ -12,6 +12,7 @@ namespace GroovyParserBackend
             var isMember = false;
             var isTripleQuotes = false;
             var isIfFor = false;
+            var considerNextType = false;
             TokenType previousToken = TokenType.None;
             // maybe need to implement some rvalue/lvalue distinctions to distinguish between
             // obj.method() operator
@@ -60,12 +61,25 @@ namespace GroovyParserBackend
                         }
                         if (type == TokenType.Identifier)
                         {
-                            type = TokenType.FunctionCall;
-                            if (considerNextIdentifier)
+                            if (value == "switch" || value == "if" || value == "for")
                             {
-                                type = TokenType.Identifier;
-                                considerNextIdentifier = false;
+                                type = TokenType.Keyword;
+                                tokens.Add(new Token
+                                {
+                                    Value = value,
+                                    Type = type,
+                                });
+                                previousToken = type;
+                                value = string.Empty;
+                                type = TokenType.None;
+                                break;
                             }
+                            type = TokenType.FunctionCall;
+                            // if (considerNextIdentifier)
+                            // {
+                            //     type = TokenType.Identifier;
+                            //     considerNextIdentifier = false;
+                            // }
                             tokens.Add(new Token()
                             {
                                 Type = type,
@@ -148,6 +162,11 @@ namespace GroovyParserBackend
                     case '{':
                         if (value != string.Empty)
                         {
+                            if (keywords.Contains(value) && !considerNextIdentifier)
+                            {
+                                type = TokenType.Keyword;
+                            }
+
                             tokens.Add(new Token()
                             {
                                 Type = type,
@@ -968,6 +987,19 @@ namespace GroovyParserBackend
                             considerNextIdentifier = false;
                         }
 
+                        if (considerNextType)
+                        {
+                            considerNextType = false;
+                            types.Add(value);
+                        }
+
+                        if (types.Contains(value))
+                        {
+                            type = TokenType.None;
+                            value = string.Empty;
+                            break;
+                        }
+
                         tokens.Add(new Token
                         {
                             Value = value,
@@ -978,9 +1010,13 @@ namespace GroovyParserBackend
                         {
                             considerNextIdentifier = true;
                         }
-                        if (type == TokenType.Keyword && (value == "for" || value == "if"))
+                        else if (type == TokenType.Keyword && (value == "for" || value == "if"))
                         {
                             isIfFor = true;
+                        }
+                        else if (type == TokenType.Keyword && value == "class")
+                        {
+                            considerNextType = true;
                         }
                         previousToken = type;
                         type = TokenType.None;
@@ -1030,6 +1066,14 @@ namespace GroovyParserBackend
             "this", "threadsafe", "throw", "throws", "transient", "try", "while", 
             "print", "println",
         };
+
+        public static readonly List<String> types = new List<string>(){
+            "byte", "short", "int", "long","float", "double","char",
+            "boolean","Byte","Short","Integer","Long","Float","Double",
+            "Character","Boolean","String","GString","Array","List",
+            "Map", "Range","BigDecimal", "BigInteger","Date", "TimeZone"
+        };
+
 
         public static readonly List<string> specialOperators = new List<string>()
         { "in", "as", };
