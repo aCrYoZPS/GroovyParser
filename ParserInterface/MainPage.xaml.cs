@@ -4,8 +4,9 @@ namespace ParserInterface
 {
     public partial class MainPage : ContentPage
     {
-        private const string _tableOperandHead = "     Operand       |     Count      ";
-        private const string _tableOperatorHead = "     Operator       |     Count      ";
+        private const string _tableOperandHead = "Operand\n";
+        private const string _tableOperatorHead = "Operator\n";
+        private const string _counterHead = "Counter";
 
         public MainPage()
         {
@@ -37,6 +38,8 @@ namespace ParserInterface
         {
             OperandTable.Text = _tableOperandHead;
             OperatorTable.Text = _tableOperatorHead;
+            OperandCounterTable.Text = _counterHead;
+            OperatorCounterTable.Text = _counterHead;
             
 
             var sourceCode = FileEditor.Text;
@@ -52,12 +55,14 @@ namespace ParserInterface
             // Processing basic metrics
             foreach (var _operand in halsteadMetrics.operandDict)
             {
-                OperandTable.Text += $"{_operand.Key}{((_operand.Key.ToString().Length > 7) ? null : '\t')}\t\t{_operand.Value}\n";
+                OperandTable.Text += $"{_operand.Key}\n";
+                OperandCounterTable.Text += $"{_operand.Value}\n";
             }
 
             foreach (var _operator in halsteadMetrics.operatorDict)
             {
-                OperatorTable.Text += $"{_operator.Key}{((_operator.Key.ToString().Length >= 8) ? null : '\t')}\t\t{_operator.Value}\n";
+                OperatorTable.Text += $"{_operator.Key}\n";
+                OperatorCounterTable.Text += $"{_operator.Value}\n";
             }
 
             UniqueOperandCounter.Text = halsteadMetrics.uniqueOperandCount.ToString();

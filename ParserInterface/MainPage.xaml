@@ -69,14 +69,25 @@
                     FontSize="24"
                     HorizontalTextAlignment="Start"/>
 
-                <ScrollView Padding="45,15,10,10">
+                <ScrollView Padding="5,15,10,10">
                     <HorizontalStackLayout>
                         <Editor
                             x:Name="OperandTable"
-                            Text="     Operand       |     Count     "
-                            HorizontalTextAlignment="Start"
+                            Text="Operand"
+                            HorizontalTextAlignment="Center"
                             IsReadOnly="True"
-                            WidthRequest="200"
+                            WidthRequest="150"
+                            HeightRequest="400"
+                            HorizontalOptions="Start"
+                            Background="WhiteSmoke"
+                            TextColor="SlateGray"
+                            />
+                        <Editor
+                            x:Name="OperandCounterTable"
+                            Text="Counter"
+                            HorizontalTextAlignment="Center"
+                            IsReadOnly="True"
+                            WidthRequest="75"
                             HeightRequest="400"
                             HorizontalOptions="Start"
                             Background="WhiteSmoke"
@@ -84,10 +95,21 @@
                             />
                         <Editor
                             x:Name="OperatorTable"
-                            Text="     Operator       |     Count     "
-                            HorizontalTextAlignment="Start"
+                            Text="Operator"
+                            HorizontalTextAlignment="Center"
                             IsReadOnly="True"
-                            WidthRequest="200"
+                            WidthRequest="150"
+                            HeightRequest="400"
+                            HorizontalOptions="Start"
+                            Background="WhiteSmoke"
+                            TextColor="SlateGray"
+                            />
+                        <Editor
+                            x:Name="OperatorCounterTable"
+                            Text="Counter"
+                            HorizontalTextAlignment="Center"
+                            IsReadOnly="True"
+                            WidthRequest="75"
                             HeightRequest="400"
                             HorizontalOptions="Start"
                             Background="WhiteSmoke"
