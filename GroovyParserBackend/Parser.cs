@@ -1,11 +1,47 @@
 using GroovyParserBackend.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace GroovyParserBackend
 {
     using TokenDict = Dictionary<Token, int>;
     public class Parser
     {
+        public static List<Token> GetNormalisedIfs(List<Token> tokens)
+        {
+            Stack<Token> ifStack = new Stack<Token>();
+            var result = new List<Token>();
+            for (int i = 0; i < tokens.Count; ++i)
+            {
+                var token = tokens[i];
+                if (token.Type == TokenType.Keyword && token.Value == "if")
+                {
+                    ifStack.Push(token);
+                }
+                else if (token.Type == TokenType.Braces)
+                {
+                    result.Add(token);
+                    if (i < tokens.Count - 1 && tokens[i + 1].Type == TokenType.Keyword && tokens[i + 1].Value == "else")
+                    {
+                        i++;
+                        ifStack.Peek().elseIfSequence.Add(tokens[i]);
+                        if (i < tokens.Count - 1 && tokens[i + 1].Type == TokenType.Keyword && tokens[i + 1].Value == "if")
+                        {
+                            i++;
+                            ifStack.Peek().elseIfSequence.Add(tokens[i]);
+                        }
+                    }
+                    else
+                    {
+                        if (ifStack.Count != 0)
+                        {
+                            ifStack.Pop();
+                        }
+                    }
+                    continue;
+                }
+                result.Add(token);
+            }
+            return result;
+        }
         public static HalsteadMetrics GetBasicMetrics(List<Token> tokens)
         {
             var operandOperatorDicts = new Tuple<TokenDict, TokenDict>(new TokenDict(), new TokenDict());

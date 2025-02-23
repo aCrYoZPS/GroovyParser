@@ -1,10 +1,13 @@
-if (true){
-    a;
+if (a){
+    if (b){
+
+    }
+    else{
+    }
 }
-else if (true){
-    b
+else if (c){
+
 }
 else {
-    c
+    d
 }
-
