@@ -486,7 +486,7 @@ namespace GroovyParserBackend
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '/')
                         {
-                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != '\n')
+                            while (pos != sourceCode.Length - 1 && sourceCode[pos] != '\r')
                             {
                                 pos++;
                             }
@@ -687,6 +687,17 @@ namespace GroovyParserBackend
                                 Value = "?:",
                                 Type = type,
                             });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '.')
+                        {
+                            type = TokenType.NullSafeMemberAccess;
+                            tokens.Add(new Token
+                            {
+                                Type = type,
+                                Value = "?.",
+                            });
+                            value += ch;
+                            value += sourceCode[++pos];
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
@@ -984,7 +995,7 @@ namespace GroovyParserBackend
                             tokens.Add(new Token
                             {
                                 Type = TokenType.Delimiter,
-                                Value = (ch == ';') ? ch.ToString() : "newline",
+                                Value = (ch == ';') ? ch.ToString() : "new line",
                             });
                         }
                         break;
