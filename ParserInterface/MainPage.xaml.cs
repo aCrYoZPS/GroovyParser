@@ -57,7 +57,7 @@ namespace ParserInterface
 
             foreach (var _operator in halsteadMetrics.operatorDict)
             {
-                OperatorTable.Text += $"{_operator.Key}{((_operator.Key.ToString().Length >= 6) ? null : '\t')}\t\t{_operator.Value}\n";
+                OperatorTable.Text += $"{_operator.Key}{((_operator.Key.ToString().Length >= 8) ? null : '\t')}\t\t{_operator.Value}\n";
             }
 
             UniqueOperandCounter.Text = halsteadMetrics.uniqueOperandCount.ToString();

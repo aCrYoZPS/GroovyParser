@@ -1,10 +1,11 @@
-if (true){
-    a;
-}
-else if (true){
-    b
-}
-else {
-    c
+class Person {
+    def first
+    def last
+
+    // явно задаем сеттер
+    void setFirst(first) {
+        println "${this.first} is becoming ${first}"
+        this.first = first
+    }
 }
 
