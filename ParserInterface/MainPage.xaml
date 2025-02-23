@@ -43,8 +43,8 @@
             </ScrollView>
 
             <Button
-                Text="Analize"
-                Clicked="OnAnalizeClicked"
+                Text="Analyse"
+                Clicked="OnAnalyseClicked"
                 WidthRequest="100" 
                 Grid.Column="0"
                 Grid.Row="4"
@@ -52,7 +52,8 @@
 
             <VerticalStackLayout Grid.Column="1"
                                  Grid.Row="0"
-                                 Margin="20, 20, 0, 0">
+                                 Margin="40, 20, 0, 0"
+                                 WidthRequest="500">
 
                 <Label
                     Text="Program dictionary:"
@@ -68,35 +69,94 @@
                     FontSize="24"
                     HorizontalTextAlignment="Start"/>
 
-                <ScrollView Padding="10,15,10,10">
-                    <Editor
-                        x:Name="ResultTable"
-                        IsReadOnly="True"
-                        WidthRequest="275"
-                        HeightRequest="465"
-                        HorizontalOptions="Start"
-                        Background="WhiteSmoke"
-                        TextColor="SlateGray"/>
+                <ScrollView Padding="45,15,10,10">
+                    <HorizontalStackLayout>
+                        <Editor
+                            x:Name="OperandTable"
+                            Text="     Operand       |     Count     "
+                            HorizontalTextAlignment="Start"
+                            IsReadOnly="True"
+                            WidthRequest="200"
+                            HeightRequest="400"
+                            HorizontalOptions="Start"
+                            Background="WhiteSmoke"
+                            TextColor="SlateGray"
+                            />
+                        <Editor
+                            x:Name="OperatorTable"
+                            Text="     Operator       |     Count     "
+                            HorizontalTextAlignment="Start"
+                            IsReadOnly="True"
+                            WidthRequest="200"
+                            HeightRequest="400"
+                            HorizontalOptions="Start"
+                            Background="WhiteSmoke"
+                            TextColor="SlateGray"
+                            />
+
+                    </HorizontalStackLayout>
+
+
                 </ScrollView>
+
+                <Label
+                    Text="Total"
+                    HorizontalOptions="Center"
+                    TextColor="Purple"
+                    FontSize="17"/>
+
+                <HorizontalStackLayout Padding="45, 0, 0, 0">
+                    <Grid ColumnDefinitions="90, 130, 80, 130">
+                        
+                        <Label 
+                            Text=""
+                            x:Name="UniqueOperandCounter" 
+                            Grid.Column="0" 
+                            HorizontalOptions="Center"/>
+                        
+                        <Label 
+                            Text=""
+                            x:Name="TotalOperandCounter"
+                            Grid.Column="1" 
+                            HorizontalOptions="Center"/>
+                        
+                        <Label 
+                            Text=""
+                            x:Name="UniqueOperatorCounter" 
+                            Grid.Column="2" 
+                            HorizontalOptions="Center"/>
+                        
+                        <Label 
+                            Text=""
+                            x:Name="TotalOperatorCounter" 
+                            Grid.Column="3" 
+                            HorizontalOptions="Center"/>
+                        
+                    </Grid>
+                </HorizontalStackLayout>
 
             </VerticalStackLayout>
 
-            <VerticalStackLayout Grid.Column="2"
+            <VerticalStackLayout Grid.Column="1"
                                  Grid.Row="0"
-                                 Margin="0, 20, 0, 0">
+                                 Grid.ColumnSpan="2"
+                                 Margin="300, 20, 0, 0">
 
                 <Label
+                    Text=""
                     x:Name="DictionaryLabel"
                     FontSize="24"
                     TextColor="Purple"
                     HorizontalTextAlignment="Start"/>
                 <Label
+                    Text=""
                     x:Name="LengthLabel"
                     FontSize="24"
                     TextColor="Purple"
                     HorizontalTextAlignment="Start"
                     Margin="0, 10, 0, 10"/>
                 <Label
+                    Text=""
                     x:Name="VolumeLabel"
                     FontSize="24"
                     TextColor="Purple"

@@ -4,7 +4,8 @@ namespace ParserInterface
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private const string _tableOperandHead = "     Operand       |     Count      ";
+        private const string _tableOperatorHead = "     Operator       |     Count      ";
 
         public MainPage()
         {
@@ -32,21 +33,42 @@ namespace ParserInterface
             }
         }
 
-        private async void OnAnalizeClicked(object sender, EventArgs e)
+        private async void OnAnalyseClicked(object sender, EventArgs e)
         {
-            ResultTable.Text = "";
-            // Обновить 3 метки и вывести результат в скроллбар
+            OperandTable.Text = _tableOperandHead;
+            OperatorTable.Text = _tableOperatorHead;
+            
+
             var sourceCode = FileEditor.Text;
             if (sourceCode == null)
             {
                 await DisplayAlert("Error!", "Please, write some code or choose one file", "OK");
                 return;
             }
-            foreach (var token in Tokenizer.Tokenize(sourceCode))
+            var tokens = Tokenizer.Tokenize(sourceCode);
+            HalsteadMetrics halsteadMetrics = Parser.GetBasicMetrics(tokens);
+            DerivedMetrics derivedMetrics = Parser.GetDerivedMetrics(halsteadMetrics);
+
+            // Processing basic metrics
+            foreach (var _operand in halsteadMetrics.operandDict)
             {
-                ResultTable.Text += token.ToString();
+                OperandTable.Text += $"{_operand.Key}{((_operand.Key.ToString().Length >= 7) ? null : '\t')}\t\t{_operand.Value}\n";
             }
+
+            foreach (var _operator in halsteadMetrics.operatorDict)
+            {
+                OperatorTable.Text += $"{_operator.Key}{((_operator.Key.ToString().Length >= 7) ? null : '\t')}\t\t{_operator.Value}\n";
+            }
+
+            UniqueOperandCounter.Text = halsteadMetrics.uniqueOperandCount.ToString();
+            UniqueOperatorCounter.Text = halsteadMetrics.uniqueOperatorCount.ToString();
+            TotalOperandCounter.Text = halsteadMetrics.operandCount.ToString();
+            TotalOperatorCounter.Text = halsteadMetrics.operatorCount.ToString();
+
+            //Processing derived metrics
+            DictionaryLabel.Text = derivedMetrics.dictionary.ToString();
+            LengthLabel.Text = derivedMetrics.length.ToString();
+            VolumeLabel.Text = derivedMetrics.volume.ToString();
         }
     }
-
 }
