@@ -69,8 +69,10 @@
                     FontSize="24"
                     HorizontalTextAlignment="Start"/>
 
-                <ScrollView Padding="5,15,10,10">
-                    <HorizontalStackLayout>
+                
+                <HorizontalStackLayout Padding="5,15,10,10">
+                    <ScrollView>
+
                         <Editor
                             x:Name="OperandTable"
                             Text="Operand"
@@ -82,7 +84,9 @@
                             Background="WhiteSmoke"
                             TextColor="SlateGray"
                             />
-                        <Editor
+                    </ScrollView>
+                    <ScrollView>
+                    <Editor
                             x:Name="OperandCounterTable"
                             Text="Counter"
                             HorizontalTextAlignment="Center"
@@ -93,7 +97,9 @@
                             Background="WhiteSmoke"
                             TextColor="SlateGray"
                             />
-                        <Editor
+                    </ScrollView>
+                    <ScrollView>
+                    <Editor
                             x:Name="OperatorTable"
                             Text="Operator"
                             HorizontalTextAlignment="Center"
@@ -104,7 +110,9 @@
                             Background="WhiteSmoke"
                             TextColor="SlateGray"
                             />
-                        <Editor
+                    </ScrollView>
+                    <ScrollView>
+                    <Editor
                             x:Name="OperatorCounterTable"
                             Text="Counter"
                             HorizontalTextAlignment="Center"
@@ -115,11 +123,9 @@
                             Background="WhiteSmoke"
                             TextColor="SlateGray"
                             />
+                    </ScrollView>
 
-                    </HorizontalStackLayout>
-
-
-                </ScrollView>
+                </HorizontalStackLayout>
 
                 <Label
                     Text="Total"
