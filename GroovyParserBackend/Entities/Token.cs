@@ -8,8 +8,8 @@ namespace GroovyParserBackend.Entities
 
         public override string ToString()
         {
-            return $"Token Type: {this.Type}\nToken Value: {this.Value}";
-            // return this.Value;
+            //return $"Token Type: {this.Type}\nToken Value: {this.Value}";
+            return this.Value;
         }
 
         public override bool Equals(object obj)

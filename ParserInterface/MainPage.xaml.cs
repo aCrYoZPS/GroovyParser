@@ -49,19 +49,27 @@ namespace ParserInterface
                 return;
             }
             var tokens = Tokenizer.Tokenize(sourceCode);
-            HalsteadMetrics halsteadMetrics = Parser.GetBasicMetrics(tokens);
+            HalsteadMetrics halsteadMetrics = Parser.GetBasicMetrics(Parser.GetNormalisedIfs(tokens));
             DerivedMetrics derivedMetrics = Parser.GetDerivedMetrics(halsteadMetrics);
 
             // Processing basic metrics
             foreach (var _operand in halsteadMetrics.operandDict)
             {
                 OperandTable.Text += $"{_operand.Key}\n";
+                if(_operand.Key.ToString().Length >= 15)
+                {
+                    OperandCounterTable.Text += '\n';
+                }
                 OperandCounterTable.Text += $"{_operand.Value}\n";
             }
 
             foreach (var _operator in halsteadMetrics.operatorDict)
             {
                 OperatorTable.Text += $"{_operator.Key}\n";
+                if (_operator.Key.ToString().Length >= 15)
+                {
+                    OperatorCounterTable.Text += '\n';
+                }
                 OperatorCounterTable.Text += $"{_operator.Value}\n";
             }
 
