@@ -49,7 +49,7 @@ namespace ParserInterface
                 return;
             }
             var tokens = Tokenizer.Tokenize(sourceCode);
-            HalsteadMetrics halsteadMetrics = Parser.GetBasicMetrics(tokens);
+            HalsteadMetrics halsteadMetrics = Parser.GetBasicMetrics(Parser.GetNormalisedIfs(tokens));
             DerivedMetrics derivedMetrics = Parser.GetDerivedMetrics(halsteadMetrics);
 
             // Processing basic metrics
