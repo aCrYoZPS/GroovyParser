@@ -1016,7 +1016,8 @@ namespace GroovyParserBackend
             "implements", "import", "instanceof", "interface", "native", "new",
             "null", "non-sealed", "package", "public", "protected", "private",
             "return", "static", "strictfp", "super", "switch", "synchronized",
-            "this", "threadsafe", "throw", "throws", "transient", "try", "while",
+            "this", "threadsafe", "throw", "throws", "transient", "try", "while", 
+            "print", "println",
         };
 
         public static readonly List<string> specialOperators = new List<string>()
