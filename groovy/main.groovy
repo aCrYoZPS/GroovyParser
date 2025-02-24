@@ -202,4 +202,3 @@ class Sort {
         def result = findMinMax(array)
         println "Min: ${result.min}, Max: ${result.max}"
     }
-}
