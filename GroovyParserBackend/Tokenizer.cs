@@ -42,6 +42,10 @@ namespace GroovyParserBackend
                         value += ch;
                         break;
                     case ',':
+                        if (keywords.Contains(value))
+                        {
+                            type = TokenType.Keyword;
+                        }
                         tokens.Add(new Token
                         {
                             Value = (value == string.Empty) ? "," : value,
@@ -61,7 +65,7 @@ namespace GroovyParserBackend
                         }
                         if (type == TokenType.Identifier)
                         {
-                            if (value == "switch" || value == "if" || value == "for" || value == "catch")
+                            if (IsOperatorParentheses(value))
                             {
                                 type = TokenType.Keyword;
                                 tokens.Add(new Token
@@ -1135,7 +1139,7 @@ namespace GroovyParserBackend
                             {
                                 considerNextIdentifier = true;
                             }
-                            else if (value == "for" || value == "if" || value == "switch" || value == "catch")
+                            else if (IsOperatorParentheses(value))
                             {
                                 isIfFor = true;
                             }
@@ -1228,6 +1232,16 @@ namespace GroovyParserBackend
         public static bool IsOperand(TokenType type)
         {
             return operandTypes.Contains(type);
+        }
+
+        public static bool IsOperatorParentheses(string value)
+        {
+
+            if (value == "switch" || value == "if" || value == "for" || value == "catch" || value == "while")
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

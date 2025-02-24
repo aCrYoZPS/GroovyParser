@@ -2,10 +2,9 @@
 using GroovyParserBackend;
 
 var sourceCode = File.ReadAllText(Path.Join(Globals.RESOURCES_PATH, "main.groovy"));
+var metr = Parser.GetBasicMetrics(Parser.GetNormalisedIfs(Tokenizer.Tokenize(sourceCode)));
 
-foreach (var token in Parser.GetNormalisedIfs(Tokenizer.Tokenize(sourceCode)))
-// foreach (var token in Tokenizer.Tokenize(sourceCode))
+foreach (var i in metr.operatorDict)
 {
-    Console.WriteLine(token.Display());
+    System.Console.WriteLine($"{i.Key.Type}({i.Key.Value}): {i.Value}");
 }
-
