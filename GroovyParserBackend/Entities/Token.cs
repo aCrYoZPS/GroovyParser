@@ -12,6 +12,11 @@ namespace GroovyParserBackend.Entities
             return this.Value;
         }
 
+        public string Display()
+        {
+            return $"Token Type: {this.Type}\nToken Value: {this.Value}";
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is Token other)

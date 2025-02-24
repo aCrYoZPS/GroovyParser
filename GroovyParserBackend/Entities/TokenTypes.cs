@@ -4,6 +4,8 @@ namespace GroovyParserBackend.Entities
     {
         None,
 
+        OpenBrace,
+
         NumberLiteral, // [DONE]
         StringLiteral, // [DONE]
 
