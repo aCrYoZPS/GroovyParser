@@ -209,16 +209,18 @@ namespace GroovyParserBackend
                         {
                             innerStr = string.Empty;
                             var bracesCounter = 1;
+                            pos++;
 
                             while (pos != sourceCode.Length - 1 && bracesCounter != 0)
                             {
-                                innerStr += sourceCode[++pos];
+                                innerStr += sourceCode[pos];
 
                                 if (sourceCode[pos + 1] == '{')
                                     ++bracesCounter;
 
                                 if (sourceCode[pos + 1] == '}')
                                     --bracesCounter;
+                                pos++;
                             }
                             innerTokens = Tokenize(innerStr);
                             tokens.Add(new Token
