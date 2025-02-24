@@ -54,6 +54,7 @@ namespace GroovyParserBackend.Entities
         Percent,// [DONE]
         DoubleStar,// [DONE]
 
+
         PlusAssignment, // [DONE]
         MinusAssignment, // [DONE]
         StarAssignment,// [DONE]

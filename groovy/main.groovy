@@ -1,4 +1,3 @@
-def array = [5, 2, 9, 1, 7]
 class Sort {
     def quickSort(int[] array, int left, int right) {
         if (left < right) {
@@ -203,4 +202,3 @@ class Sort {
         def result = findMinMax(array)
         println "Min: ${result.min}, Max: ${result.max}"
     }
-}

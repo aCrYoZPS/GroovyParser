@@ -44,7 +44,7 @@ namespace GroovyParserBackend
                     case ',':
                         tokens.Add(new Token
                         {
-                            Value = value,
+                            Value = (value == string.Empty) ? "," : value,
                             Type = type,
                         });
                         previousToken = type;
@@ -269,7 +269,7 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
                         }
-                        if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '~')
+                        else if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '~')
                         {
                             type = TokenType.MatchOperator;
                             pos += 2;
@@ -415,6 +415,7 @@ namespace GroovyParserBackend
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '-')
                         {
+                            previousToken = type;
                             if (type == TokenType.None || value == string.Empty)
                             {
                                 pos++;
@@ -477,7 +478,17 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
                         }
-                        if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
+                        else if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '*' && sourceCode[pos + 2] == '=')
+                        {
+                            pos += 2;
+                            type = TokenType.DoubleStarAssignment;
+                            tokens.Add(new Token
+                            {
+                                Value = "**=",
+                                Type = type,
+                            });
+                        }
+                        else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
                             pos++;
                             type = TokenType.StarAssignment;
