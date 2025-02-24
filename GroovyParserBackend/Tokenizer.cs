@@ -75,11 +75,10 @@ namespace GroovyParserBackend
                                 break;
                             }
                             type = TokenType.FunctionCall;
-                            // if (considerNextIdentifier)
-                            // {
-                            //     type = TokenType.Identifier;
-                            //     considerNextIdentifier = false;
-                            // }
+                            if (considerNextIdentifier)
+                            {
+                                considerNextIdentifier = false;
+                            }
                             tokens.Add(new Token()
                             {
                                 Type = type,
