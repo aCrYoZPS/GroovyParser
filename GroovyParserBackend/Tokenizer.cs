@@ -61,7 +61,7 @@ namespace GroovyParserBackend
                         }
                         if (type == TokenType.Identifier)
                         {
-                            if (value == "switch" || value == "if" || value == "for")
+                            if (value == "switch" || value == "if" || value == "for" || value == "catch")
                             {
                                 type = TokenType.Keyword;
                                 tokens.Add(new Token
@@ -99,12 +99,19 @@ namespace GroovyParserBackend
                         pos++;
                         var innerStr = string.Empty;
 
-                        while (sourceCode[pos] != ')')
+                        var parenthesesCounter = 1;
+
+                        while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
                         {
                             innerStr += sourceCode[pos];
+
+                            if (sourceCode[pos + 1] == '(')
+                                ++parenthesesCounter;
+
+                            if (sourceCode[pos + 1] == ')')
+                                --parenthesesCounter;
                             pos++;
                         }
-                        innerStr += sourceCode[pos];
 
                         var innerTokens = Tokenize(innerStr);
                         tokens.AddRange(innerTokens);
@@ -116,11 +123,20 @@ namespace GroovyParserBackend
                         break;
                     case '[':
                         innerStr = string.Empty;
-                        while (pos != sourceCode.Length - 1 && sourceCode[pos + 1] != ']')
+                        var bracketsCounter = 1;
+                        pos++;
+
+                        while (pos != sourceCode.Length - 1 && bracketsCounter != 0)
                         {
-                            innerStr += sourceCode[++pos];
+                            innerStr += sourceCode[pos];
+
+                            if (sourceCode[pos + 1] == '[')
+                                ++bracketsCounter;
+
+                            if (sourceCode[pos + 1] == ']')
+                                --bracketsCounter;
+                            pos++;
                         }
-                        ++pos;
                         innerTokens = Tokenize(innerStr);
                         if (!types.Contains(value))
                         {
@@ -1103,24 +1119,34 @@ namespace GroovyParserBackend
                             type = TokenType.TypeAnnotation;
                         }
 
+                        if (type == TokenType.Keyword)
+                        {
+                            if (value == "def")
+                            {
+                                considerNextIdentifier = true;
+                            }
+                            else if (value == "for" || value == "if" || value == "switch" || value == "catch")
+                            {
+                                isIfFor = true;
+                            }
+                            else if (value == "class")
+                            {
+                                considerNextType = true;
+                            }
+                            else if (value == "do")
+                            {
+                                previousToken = type;
+                                type = TokenType.None;
+                                value = string.Empty;
+                                continue;
+                            }
+                        }
+
                         tokens.Add(new Token
                         {
                             Value = value,
                             Type = type,
                         });
-
-                        if (type == TokenType.Keyword && value == "def")
-                        {
-                            considerNextIdentifier = true;
-                        }
-                        else if (type == TokenType.Keyword && (value == "for" || value == "if" || value == "switch" || value == "catch"))
-                        {
-                            isIfFor = true;
-                        }
-                        else if (type == TokenType.Keyword && value == "class")
-                        {
-                            considerNextType = true;
-                        }
                         previousToken = type;
                         type = TokenType.None;
                         value = string.Empty;
