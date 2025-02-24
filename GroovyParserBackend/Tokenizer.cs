@@ -100,17 +100,19 @@ namespace GroovyParserBackend
                         var innerStr = string.Empty;
 
                         var parenthesesCounter = 1;
-
-                        while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
+                        if (sourceCode[pos] != ')')
                         {
-                            innerStr += sourceCode[pos];
+                            while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
+                            {
+                                innerStr += sourceCode[pos];
 
-                            if (sourceCode[pos + 1] == '(')
-                                ++parenthesesCounter;
+                                if (sourceCode[pos + 1] == '(')
+                                    ++parenthesesCounter;
 
-                            if (sourceCode[pos + 1] == ')')
-                                --parenthesesCounter;
-                            pos++;
+                                if (sourceCode[pos + 1] == ')')
+                                    --parenthesesCounter;
+                                pos++;
+                            }
                         }
 
                         var innerTokens = Tokenize(innerStr);
@@ -125,19 +127,26 @@ namespace GroovyParserBackend
                         innerStr = string.Empty;
                         var bracketsCounter = 1;
                         pos++;
-
-                        while (pos != sourceCode.Length - 1 && bracketsCounter != 0)
+                        if (sourceCode[pos] != ']')
                         {
-                            innerStr += sourceCode[pos];
+                            while (pos != sourceCode.Length - 1 && bracketsCounter != 0)
+                            {
+                                innerStr += sourceCode[pos];
 
-                            if (sourceCode[pos + 1] == '[')
-                                ++bracketsCounter;
+                                if (sourceCode[pos + 1] == '[')
+                                    ++bracketsCounter;
 
-                            if (sourceCode[pos + 1] == ']')
-                                --bracketsCounter;
-                            pos++;
+                                if (sourceCode[pos + 1] == ']')
+                                    --bracketsCounter;
+                                pos++;
+                            }
+                            innerTokens = Tokenize(innerStr);
                         }
-                        innerTokens = Tokenize(innerStr);
+                        else
+                        {
+                            innerTokens = new List<Token>();
+                        }
+
                         if (!types.Contains(value))
                         {
                             if ((innerTokens.Count == 1 && innerTokens[0].Type == TokenType.NumberLiteral)
