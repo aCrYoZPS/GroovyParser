@@ -225,7 +225,7 @@ namespace GroovyParserBackend
                                 Type = type,
                             });
                         }
-                        if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '~')
+                        else if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '=' && sourceCode[pos + 2] == '~')
                         {
                             type = TokenType.MatchOperator;
                             pos += 2;
