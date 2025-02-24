@@ -5,19 +5,105 @@ namespace GroovyParserBackend
     using TokenDict = Dictionary<Token, int>;
     public class Parser
     {
+        public static List<Token> GetNormalisedSwitch(List<Token> tokens)
+        {
+            Stack<Token> switchStack = new Stack<Token>();
+            var braceCount = 0;
+            var currentBraceLevel = new Stack<int>();
+            var switchBrace = false;
+            var result = new List<Token>();
+            for (int i = 0; i < tokens.Count; ++i)
+            {
+                var token = tokens[i];
+                if (token.Type == TokenType.Keyword && token.Value == "switch")
+                {
+                    switchStack.Push(token);
+                    switchBrace = true;
+                }
+                else if (token.Type == TokenType.OpenBrace)
+                {
+                    braceCount += 1;
+
+                    if (switchBrace)
+                    {
+                        currentBraceLevel.Push(braceCount);
+                        switchBrace = false;
+                    }
+                }
+                else if (token.Type == TokenType.Braces)
+                {
+                    if (currentBraceLevel.Count > 0 && braceCount > currentBraceLevel.Peek())
+                    {
+                        braceCount -= 1;
+                        result.Add(token);
+                        continue;
+                    }
+                    result.Add(token);
+                    if (i < tokens.Count - 1 && tokens[i + 1].Type == TokenType.Keyword && (tokens[i + 1].Value == "case" || tokens[i + 1].Value == "default"))
+                    {
+                        i++;
+                        switchStack.Peek().elseIfSequence.Add(tokens[i]);
+                    }
+                    else
+                    {
+                        if (switchStack.Count != 0)
+                        {
+                            switchStack.Pop();
+                            currentBraceLevel.Pop();
+                        }
+                    }
+                    continue;
+                }
+                else if (token.Type == TokenType.Keyword && token.Value == "case")
+                {
+                    switchStack.Peek().elseIfSequence.Add(tokens[i]);
+                    continue;
+                }
+                result.Add(token);
+            }
+            return result;
+        }
         public static List<Token> GetNormalisedIfs(List<Token> tokens)
         {
+            tokens = GetNormalisedSwitch(tokens);
             Stack<Token> ifStack = new Stack<Token>();
+            var braceCount = 0;
+            var currentBraceLevel = new Stack<int>();
+            var ifBrace = false;
             var result = new List<Token>();
+            var ignoreNextBrace = false;
+
             for (int i = 0; i < tokens.Count; ++i)
             {
                 var token = tokens[i];
                 if (token.Type == TokenType.Keyword && token.Value == "if")
                 {
                     ifStack.Push(token);
+                    ifBrace = true;
+                }
+                else if (token.Type == TokenType.OpenBrace)
+                {
+                    if (ignoreNextBrace)
+                    {
+                        ignoreNextBrace = false;
+                        continue;
+                    }
+                    braceCount += 1;
+                    if (ifBrace)
+                    {
+                        currentBraceLevel.Push(braceCount);
+                        ifBrace = false;
+                    }
+                    continue;
                 }
                 else if (token.Type == TokenType.Braces)
                 {
+                    if (currentBraceLevel.Count > 0 && braceCount > currentBraceLevel.Peek())
+                    {
+                        braceCount -= 1;
+                        result.Add(token);
+                        continue;
+                    }
                     result.Add(token);
                     if (i < tokens.Count - 1 && tokens[i + 1].Type == TokenType.Keyword && tokens[i + 1].Value == "else")
                     {
@@ -28,6 +114,7 @@ namespace GroovyParserBackend
                             i++;
                             ifStack.Peek().elseIfSequence.Add(tokens[i]);
                         }
+                        ignoreNextBrace = true;
                     }
                     else
                     {
