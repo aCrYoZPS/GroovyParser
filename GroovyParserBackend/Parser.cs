@@ -145,7 +145,15 @@ namespace GroovyParserBackend
                         }
                         break;
                     default:
-                        if (!operandOperatorDicts.Item2.TryAdd(token, 1))
+                        if (token.Type == TokenType.Keyword && Tokenizer.operandKeywords.Contains(token.Value))
+                        {
+                            if (!operandOperatorDicts.Item1.TryAdd(token, 1))
+                            {
+                                operandOperatorDicts.Item1[token] += 1;
+                            }
+
+                        }
+                        else if (!operandOperatorDicts.Item2.TryAdd(token, 1))
                         {
                             operandOperatorDicts.Item2[token] += 1;
                         }

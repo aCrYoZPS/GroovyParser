@@ -152,7 +152,7 @@ namespace GroovyParserBackend
 
                         if (!types.Contains(value))
                         {
-                            if ((innerTokens.Count == 1 && innerTokens[0].Type == TokenType.NumberLiteral)
+                            if ((innerTokens.Count == 1 && (innerTokens[0].Type == TokenType.NumberLiteral || innerTokens[0].Type == TokenType.Identifier))
                                     || (innerTokens.Count == 3 && innerTokens[1].Type == TokenType.RangeOperator))
                             {
                                 type = TokenType.SubscriptOperator;
@@ -161,6 +161,8 @@ namespace GroovyParserBackend
                                     Type = type,
                                     Value = $"collection[]",
                                 });
+
+                                type = TokenType.Identifier;
                                 value += $"[{innerStr}]";
                             }
                             else
@@ -1204,10 +1206,15 @@ namespace GroovyParserBackend
             "class", "const", "continue", "def", "default", "do", "else",
             "enum", "extends", "final", "finally", "for", "goto", "if",
             "implements", "import", "instanceof", "interface", "native", "new",
-            "null", "non-sealed", "package", "public", "protected", "private",
+            "non-sealed", "package", "public", "protected", "private",
             "return", "static", "strictfp", "super", "switch", "synchronized",
             "this", "threadsafe", "throw", "throws", "transient", "try", "while",
             "print", "println",
+            "null", "true", "false"
+        };
+
+        public static readonly List<string> operandKeywords = new List<string>(){
+            "null", "true", "false"
         };
 
         public static readonly List<string> types = new List<string>(){
