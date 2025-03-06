@@ -1205,8 +1205,7 @@ namespace GroovyParserBackend
             "non-sealed", "package", "public", "protected", "private",
             "return", "static", "strictfp", "super", "switch", "synchronized",
             "this", "threadsafe", "throw", "throws", "transient", "try", "while",
-            "print", "println",
-            "null", "true", "false"
+            "print", "println", "true", "false"
         };
 
         public static readonly List<string> operandKeywords = new List<string>(){
