@@ -1049,6 +1049,12 @@ namespace GroovyParserBackend
                                 var delim = ' ';
                                 if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '{')
                                 {
+                                    type = TokenType.Braces;
+                                    tokens.Add(new Token
+                                    {
+                                        Type = type,
+                                        Value = "{}",
+                                    });
                                     value += '{';
                                     delim = '}';
                                     interpolationPos++;
