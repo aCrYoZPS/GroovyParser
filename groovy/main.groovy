@@ -200,6 +200,6 @@ class Sort {
 
         def array = [5, 2, 9, 1, 7]
         def result = findMinMax(array)
-        println "Min: ${result.min}, Max: ${result.max}"
+        println("Min: ${result.min}, Max: ${result.max}")
     }
 }

@@ -4,13 +4,16 @@ namespace ParserInterface
 {
     public partial class MainPage : ContentPage
     {
-        private const string _tableOperandHead = "Operand\n";
-        private const string _tableOperatorHead = "Operator\n";
-        private const string _counterHead = "Counter";
+
+        private const int keyColumnWidth = 30;
+        private const int valueColumnWidth = 8;
+        
 
         public MainPage()
         {
             InitializeComponent();
+            OperatorTable.FontFamily = "Courier New";
+            OperandTable.FontFamily = "Courier New";
         }
 
         private async void OnOpenFileClicked(object sender, EventArgs e)
@@ -36,11 +39,10 @@ namespace ParserInterface
 
         private async void OnAnalyseClicked(object sender, EventArgs e)
         {
-            OperandTable.Text = _tableOperandHead;
-            OperatorTable.Text = _tableOperatorHead;
-            OperandCounterTable.Text = _counterHead;
-            OperatorCounterTable.Text = _counterHead;
-            
+            OperandTable.Text = $"{"Operand".PadRight(keyColumnWidth)}" +
+                                $"{"Counter".PadRight(valueColumnWidth)}\n";
+            OperatorTable.Text = $"{"Operator".PadRight(keyColumnWidth)}" +
+                                 $"{"Counter".PadRight(valueColumnWidth)}\n";
 
             var sourceCode = FileEditor.Text;
             if (sourceCode == null)
@@ -53,24 +55,23 @@ namespace ParserInterface
             DerivedMetrics derivedMetrics = Parser.GetDerivedMetrics(halsteadMetrics);
 
             // Processing basic metrics
+            OperandTable.Text += new string('-', keyColumnWidth + valueColumnWidth) + "\n";
+            OperatorTable.Text += new string('-', keyColumnWidth + valueColumnWidth) + "\n";
+
             foreach (var _operand in halsteadMetrics.operandDict)
             {
-                OperandTable.Text += $"{_operand.Key}\n";
-                if(_operand.Key.ToString().Length >= 15)
-                {
-                    OperandCounterTable.Text += '\n';
-                }
-                OperandCounterTable.Text += $"{_operand.Value}\n";
+                string operand = _operand.Key.ToString().PadRight(keyColumnWidth);
+                string counter = _operand.Value.ToString().PadRight(valueColumnWidth);
+
+                OperandTable.Text += $"{operand}{counter}\n";
             }
 
             foreach (var _operator in halsteadMetrics.operatorDict)
             {
-                OperatorTable.Text += $"{_operator.Key}\n";
-                if (_operator.Key.ToString().Length >= 15)
-                {
-                    OperatorCounterTable.Text += '\n';
-                }
-                OperatorCounterTable.Text += $"{_operator.Value}\n";
+                string oper = _operator.Key.ToString().PadRight(keyColumnWidth);
+                string counter = _operator.Value.ToString().PadRight(valueColumnWidth);
+
+                OperatorTable.Text += $"{oper}{counter}\n";
             }
 
             UniqueOperandCounter.Text = halsteadMetrics.uniqueOperandCount.ToString();
