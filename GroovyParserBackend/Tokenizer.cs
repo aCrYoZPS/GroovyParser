@@ -158,11 +158,8 @@ namespace GroovyParserBackend
                                 tokens.Add(new Token()
                                 {
                                     Type = type,
-                                    Value = $"collection[]",
+                                    Value = "collection[]",
                                 });
-
-                                type = TokenType.Identifier;
-                                value += $"[{innerStr}]";
                             }
                             else
                             {
@@ -172,10 +169,10 @@ namespace GroovyParserBackend
                                     Type = type,
                                     Value = "[]",
                                 });
-                                previousToken = type;
-                                type = TokenType.None;
-                                value = string.Empty;
                             }
+                            previousToken = type;
+                            value = string.Empty;
+                            type = TokenType.None;
                         }
                         else
                         {
@@ -1054,6 +1051,12 @@ namespace GroovyParserBackend
                                 var delim = ' ';
                                 if (pos != sourceCode.Length - 2 && sourceCode[pos + 1] == '{')
                                 {
+                                    type = TokenType.Braces;
+                                    tokens.Add(new Token
+                                    {
+                                        Type = type,
+                                        Value = "{}",
+                                    });
                                     value += '{';
                                     delim = '}';
                                     interpolationPos++;
@@ -1210,8 +1213,7 @@ namespace GroovyParserBackend
             "non-sealed", "package", "public", "protected", "private",
             "return", "static", "strictfp", "super", "switch", "synchronized",
             "this", "threadsafe", "throw", "throws", "transient", "try", "while",
-            "print", "println",
-            "null", "true", "false"
+            "print", "println", "true", "false"
         };
 
         public static readonly List<string> operandKeywords = new List<string>(){
