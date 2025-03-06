@@ -152,8 +152,7 @@ namespace GroovyParserBackend
 
                         if (!types.Contains(value))
                         {
-                            if ((innerTokens.Count == 1 && (innerTokens[0].Type == TokenType.NumberLiteral || innerTokens[0].Type == TokenType.Identifier))
-                                    || (innerTokens.Count == 3 && innerTokens[1].Type == TokenType.RangeOperator))
+                            if (!string.IsNullOrEmpty(value))
                             {
                                 type = TokenType.SubscriptOperator;
                                 tokens.Add(new Token()
@@ -335,7 +334,6 @@ namespace GroovyParserBackend
                             type = TokenType.PlusAssignment;
                             tokens.Add(new Token
                             {
-
                                 Value = "+=",
                                 Type = type,
                             });
@@ -405,6 +403,9 @@ namespace GroovyParserBackend
                                 Value = value,
                                 Type = type,
                             });
+                            previousToken = type;
+                            type = TokenType.None;
+                            value = string.Empty;
                         }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '>')
                         {
