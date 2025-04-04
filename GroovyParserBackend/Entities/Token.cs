@@ -5,6 +5,7 @@ namespace GroovyParserBackend.Entities
         public TokenType Type { get; set; }
         public string Value { get; set; } = string.Empty;
         public List<Token> elseIfSequence = new List<Token>();
+        public VariableStatus Status;
 
         public override string ToString()
         {

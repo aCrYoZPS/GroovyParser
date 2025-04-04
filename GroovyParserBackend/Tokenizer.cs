@@ -12,13 +12,9 @@ namespace GroovyParserBackend
             var isMember = false;
             var isTripleQuotes = false;
             var isIfFor = false;
+            var isLHS = true; // Left Hand Side == lvalue
             var considerNextType = false;
             TokenType previousToken = TokenType.None;
-            // maybe need to implement some rvalue/lvalue distinctions to distinguish between
-            // obj.method() operator
-            // a = obj.method() operand?
-            // a = obj.method definetly operand
-            // a = obj."I HATE THIS LANG" valid groovy code btw
             TokenType type = TokenType.None;
             for (int pos = 0; pos < sourceCode.Length; ++pos)
             {
@@ -58,11 +54,40 @@ namespace GroovyParserBackend
                     case ')':
                         break;
                     case '(':
+                        var innerStr = string.Empty;
+                        var parenthesesCounter = 1;
+                        List<Token> innerTokens;
+
                         if (isIfFor)
                         {
                             isIfFor = false;
+                            if (sourceCode[pos] != ')')
+                            {
+                                while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
+                                {
+                                    innerStr += sourceCode[pos];
+
+                                    if (sourceCode[pos + 1] == '(')
+                                        ++parenthesesCounter;
+
+                                    if (sourceCode[pos + 1] == ')')
+                                        --parenthesesCounter;
+                                    pos++;
+                                }
+                            }
+
+                            innerTokens = Tokenize(innerStr);
+
+                            foreach (var token in innerTokens)
+                            {
+                                token.Status.IsControl = true;
+                            }
+
+                            tokens.AddRange(innerTokens);
+
                             break;
                         }
+
                         if (type == TokenType.Identifier)
                         {
                             if (IsOperatorParentheses(value))
@@ -73,11 +98,35 @@ namespace GroovyParserBackend
                                     Value = value,
                                     Type = type,
                                 });
+
+                                if (sourceCode[pos] != ')')
+                                {
+                                    while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
+                                    {
+                                        innerStr += sourceCode[pos];
+
+                                        if (sourceCode[pos + 1] == '(')
+                                            ++parenthesesCounter;
+
+                                        if (sourceCode[pos + 1] == ')')
+                                            --parenthesesCounter;
+                                        pos++;
+                                    }
+                                }
+
+                                innerTokens = Tokenize(innerStr);
+
+                                foreach (var token in innerTokens)
+                                {
+                                    token.Status.IsControl = true;
+                                }
+
                                 previousToken = type;
                                 value = string.Empty;
                                 type = TokenType.None;
                                 break;
                             }
+
                             type = TokenType.FunctionCall;
                             if (considerNextIdentifier)
                             {
@@ -100,9 +149,9 @@ namespace GroovyParserBackend
                         }
 
                         pos++;
-                        var innerStr = string.Empty;
+                        innerStr = string.Empty;
 
-                        var parenthesesCounter = 1;
+                        parenthesesCounter = 1;
                         if (sourceCode[pos] != ')')
                         {
                             while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
@@ -118,7 +167,7 @@ namespace GroovyParserBackend
                             }
                         }
 
-                        var innerTokens = Tokenize(innerStr);
+                        innerTokens = Tokenize(innerStr);
                         tokens.AddRange(innerTokens);
 
                         previousToken = type;
@@ -198,6 +247,10 @@ namespace GroovyParserBackend
                                 {
                                     Type = type,
                                     Value = value,
+                                    Status = new VariableStatus
+                                    {
+                                        IsModified = true,
+                                    }
                                 });
                             }
                             else
@@ -319,6 +372,7 @@ namespace GroovyParserBackend
                                 Value = "=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         previousToken = type;
                         type = TokenType.None;
@@ -1107,6 +1161,7 @@ namespace GroovyParserBackend
                     case '\n':
                     case '\r':
                     case ' ':
+                        isLHS = true;
                         if (string.IsNullOrWhiteSpace(value))
                         {
                             break;
