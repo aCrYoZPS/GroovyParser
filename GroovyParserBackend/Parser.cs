@@ -181,6 +181,7 @@ namespace GroovyParserBackend
                     token.Type == TokenType.FunctionCall ||
                     token.Type == TokenType.SubscriptOperator)
                 {
+                    Console.WriteLine($"{token.Value} : {token.Type}");
                     if (token.Type == TokenType.FunctionCall && !token.Value.Contains('.'))
                         continue;
 
@@ -192,6 +193,9 @@ namespace GroovyParserBackend
                     {
                         token.Value = token.Value.Split('[')[0];
                     }
+                    if (token.Value == "")
+                        continue;
+
                     token.Type = TokenType.Identifier;
                     if (!spans.TryAdd(token, 1))
                     {

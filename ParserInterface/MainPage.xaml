@@ -107,58 +107,70 @@
                 </HorizontalStackLayout>
             </VerticalStackLayout>
 
-            <HorizontalStackLayout Grid.Row="2"
-                                   Grid.Column="1"
-                                   Grid.ColumnSpan="2"
-                                   Margin="40,20,0,0">
-                <Label
-                    Style="{StaticResource ChepinMetricsLabelStyle}" 
-                    Text ="Chepin's metrics"
-                />
-                <Label
-                    Style="{StaticResource ChepinMetricsLabelStyle}" 
-                    Text ="Input/Output"
-                    Margin="250,10,0,0"
-                />
-
-            </HorizontalStackLayout>
-            <HorizontalStackLayout Grid.Column="1"
-                                   Grid.Row="2"
-                                   Grid.RowSpan="2"
-                                   Grid.ColumnSpan="2"
-                                   Margin="40,20,0,0">
-
-                <ScrollView>
-                    <Editor
-                        x:Name="ChepinTable"
-                        Style="{StaticResource EditorStyle}" 
+            <VerticalStackLayout Grid.Row="2"
+                                 Grid.RowSpan="5"
+                                 Grid.Column="1"
+                                 Grid.ColumnSpan="2"
+                                 Margin="40,20,0,0">
+                <HorizontalStackLayout>
+                    <Label
+                        Style="{StaticResource ChepinMetricsLabelStyle}" 
+                        Text ="Chepin's metrics"
                     />
-                </ScrollView>
-                <ScrollView>
-                    <Editor
-                      x:Name="InputOutputTable"
-                      Style="{StaticResource EditorStyle}" 
-                      Margin="110,0,0,0"
+                    <Label
+                        Style="{StaticResource ChepinMetricsLabelStyle}" 
+                        Text ="Input/Output"
+                        Margin="250,10,0,0"
                     />
-                </ScrollView>
-            </HorizontalStackLayout>
 
-            <HorizontalStackLayout>
-                <Label
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+
+                    <ScrollView>
+                        <Editor
+                            x:Name="ChepinTable"
+                            Style="{StaticResource EditorStyle}" 
+                        />
+                    </ScrollView>
+                    <ScrollView>
+                        <Editor
+                            x:Name="InputOutputTable"
+                            Style="{StaticResource EditorStyle}" 
+                            Margin="110,0,0,0"
+                        />
+                    </ScrollView>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label
                         Text="Total Chepin's metric: "
                         TextColor="DarkBlue"
                         FontSize="18"
               
-                    />
-                <Label 
+                     />
+                    <Label 
                         x:Name="TotalChepinMetric"
                         Text="xx"
                         TextColor="Purple"
                         FontSize="18"
                         Margin="10,0,0,0"
                     />
+                    <Label
+                        Text="Total Chepin's metric: "
+                        TextColor="DarkBlue"
+                        FontSize="18"
+                        Margin="250,0,0,0"
+                     />
+                    <Label 
+                        x:Name="TotalIOMetric"
+                        Text="xx"
+                        TextColor="Purple"
+                        FontSize="18"
+                        Margin="10,0,0,0"
+                    />
 
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
+                
+            </VerticalStackLayout>
             <!--<Image 
                 Grid.Row="0"  
                 Grid.Column="2" 

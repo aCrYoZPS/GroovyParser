@@ -69,6 +69,21 @@ class GroovyCollectionDemo {
         
         def grouped = sampleItems.groupBy { it.size() }
         println("Grouped by length: ${grouped}")
+    
+        println("\n=== Number Operations ===")
+        def scanner = new Scanner(System.in)
+        
+        print("Enter a num: ")
+        def userNumber = scanner.nextInt()
+        
+        def factorial = (1..userNumber).inject(1) { acc, val -> acc * val }
+        println("Factorial ${userNumber}! = ${factorial}")
+        
+        def fibUpTo = generateFibonacci(20).findAll { it <= userNumber }
+        println("Fibonacci before ${userNumber}: ${fibUpTo}")
+
+        println("Binary representation: ${Integer.toBinaryString(userNumber)}")
+        
     }
 }
 
