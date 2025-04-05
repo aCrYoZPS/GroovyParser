@@ -13,6 +13,8 @@ namespace ParserInterface
         {
             InitializeComponent();
             SpansTable.FontFamily = "Courier New";
+            InputOutputTable.FontFamily = "Courier New";
+            ChepinTable.FontFamily = "Courier New";
         }
 
         private async void OnOpenFileClicked(object sender, EventArgs e)
