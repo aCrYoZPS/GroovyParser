@@ -98,7 +98,7 @@ namespace GroovyParserBackend
                                     Value = value,
                                     Type = type,
                                 });
-
+                                pos++;
                                 if (sourceCode[pos] != ')')
                                 {
                                     while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
@@ -120,6 +120,8 @@ namespace GroovyParserBackend
                                 {
                                     token.Status.IsControl = true;
                                 }
+
+                                tokens.AddRange(innerTokens);
 
                                 previousToken = type;
                                 value = string.Empty;
@@ -207,7 +209,7 @@ namespace GroovyParserBackend
                                 tokens.Add(new Token()
                                 {
                                     Type = type,
-                                    Value = "collection[]",
+                                    Value = value + "[]",
                                 });
                             }
                             else
