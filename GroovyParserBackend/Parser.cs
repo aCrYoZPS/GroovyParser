@@ -177,8 +177,16 @@ namespace GroovyParserBackend
             TokenDict spans = new();
             foreach (var token in tokens)
             {
-                if (token.Type == TokenType.Identifier)
+                if (token.Type == TokenType.Identifier || token.Type == TokenType.FunctionCall)
                 {
+                    if (token.Type == TokenType.FunctionCall && !token.Value.Contains('.'))
+                        continue;
+
+                    if (token.Value.Contains('.'))
+                    {
+                        token.Value = token.Value.Split('.')[0];
+                    }
+                    token.Type = TokenType.Identifier;
                     if (!spans.TryAdd(token, 1))
                     {
                         spans[token] += 1;

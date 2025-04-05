@@ -1074,7 +1074,7 @@ namespace GroovyParserBackend
                                 tokens.Add(new Token
                                 {
                                     Type = TokenType.MemberAccess,
-                                    Value = "obj.member",
+                                    Value = value + ".member",
                                 });
                                 isMember = true;
                             }
@@ -1084,7 +1084,7 @@ namespace GroovyParserBackend
                     case '\'':
                     case '"':
                         type = TokenType.StringLiteral;
-                        if (pos != sourceCode.Length - 3 && sourceCode[pos + 1] == ch && sourceCode[pos + 2] == ch)
+                        if (pos <= sourceCode.Length - 3 && sourceCode[pos + 1] == ch && sourceCode[pos + 2] == ch)
                         {
                             pos += 2;
                             isTripleQuotes = true;
