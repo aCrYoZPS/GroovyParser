@@ -172,6 +172,29 @@ namespace GroovyParserBackend
             };
         }
 
+        public static TokenDict GetSpans(List<Token> tokens)
+        {
+            TokenDict spans = new();
+            foreach (var token in tokens)
+            {
+                if (token.Type == TokenType.Identifier)
+                {
+                    if (!spans.TryAdd(token, 1))
+                    {
+                        spans[token] += 1;
+                    }
+                }
+            }
+            foreach (var key in spans.Keys.ToList())
+            {
+                spans[key] -= 1;
+                if(spans[key] == 0)
+                {
+                    spans.Remove(key);
+                }
+            }
+            return spans;
+        }
         public static DerivedMetrics GetDerivedMetrics(HalsteadMetrics metrics)
         {
             int dictionary = metrics.uniqueOperatorCount + metrics.uniqueOperandCount;
