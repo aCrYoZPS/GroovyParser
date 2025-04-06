@@ -98,7 +98,7 @@ namespace GroovyParserBackend
                                     Value = value,
                                     Type = type,
                                 });
-
+                                pos++;
                                 if (sourceCode[pos] != ')')
                                 {
                                     while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
@@ -120,6 +120,8 @@ namespace GroovyParserBackend
                                 {
                                     token.Status.IsControl = true;
                                 }
+
+                                tokens.AddRange(innerTokens);
 
                                 previousToken = type;
                                 value = string.Empty;
@@ -207,7 +209,7 @@ namespace GroovyParserBackend
                                 tokens.Add(new Token()
                                 {
                                     Type = type,
-                                    Value = "collection[]",
+                                    Value = value + "[]",
                                 });
                             }
                             else
@@ -1074,7 +1076,7 @@ namespace GroovyParserBackend
                                 tokens.Add(new Token
                                 {
                                     Type = TokenType.MemberAccess,
-                                    Value = "obj.member",
+                                    Value = value + ".member",
                                 });
                                 isMember = true;
                             }
@@ -1084,7 +1086,7 @@ namespace GroovyParserBackend
                     case '\'':
                     case '"':
                         type = TokenType.StringLiteral;
-                        if (pos != sourceCode.Length - 3 && sourceCode[pos + 1] == ch && sourceCode[pos + 2] == ch)
+                        if (pos <= sourceCode.Length - 3 && sourceCode[pos + 1] == ch && sourceCode[pos + 2] == ch)
                         {
                             pos += 2;
                             isTripleQuotes = true;

@@ -4,7 +4,27 @@
              x:Class="ParserInterface.MainPage"
              Title="Groovy Parser"
              >
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ChepinMetricsLabelStyle" TargetType="Label">
+                <Setter Property="Text" Value="Chepin's metrics" />
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="TextColor" Value="Purple" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
 
+            <Style x:Key="EditorStyle" TargetType="Editor">
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="WidthRequest" Value="350" />
+                <Setter Property="HeightRequest" Value="200" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="Background" Value="WhiteSmoke" />
+                <Setter Property="TextColor" Value="SlateGray" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem 
             Text="Open file"
@@ -16,6 +36,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="450"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                
             </Grid.ColumnDefinitions>
@@ -39,7 +60,7 @@
                     HeightRequest="620" 
                     BackgroundColor="AliceBlue"
                     
-                    />
+                />
             </ScrollView>
 
             <Button
@@ -48,127 +69,108 @@
                 WidthRequest="100" 
                 Grid.Column="0"
                 Grid.Row="4"
-                Margin="0, 5, 0, 5"/>
+                Margin="0,5,0,5"/>
 
             <VerticalStackLayout Grid.Column="1"
                                  Grid.Row="0"
-                                 Margin="0, 20, 0, 0"
-                                 WidthRequest="800"
-                                 Padding="20,0,0,0">
+                                 Grid.RowSpan="2"
+                                 Margin="40,20,0,0"
+                                 Padding="0,0,0,0">
 
                 <Label
-                    Text="Program dictionary:"
-                    FontSize="24"
-                    HorizontalTextAlignment="Start"/>
-                <Label
-                    Text="Program length:"
-                    FontSize="24"
-                    HorizontalTextAlignment="Start"
-                    Margin="0, 10, 0, 10"/>
-                <Label
-                    Text="Program volume:"
-                    FontSize="24"
-                    HorizontalTextAlignment="Start"/>
+                    Style="{StaticResource ChepinMetricsLabelStyle}" 
+                    Text ="Spans"
+                />
 
-                
-                <HorizontalStackLayout Padding="5,15,10,10">
-                    <ScrollView>
-                        <Editor
-                            x:Name="OperandTable"
-                            Text="Operand"
-                            HorizontalTextAlignment="Justify"
-                            IsReadOnly="True"
-                            WidthRequest="350"
-                            HeightRequest="400"
-                            HorizontalOptions="Start"
-                            Background="WhiteSmoke"
-                            TextColor="SlateGray"
-                            />
-                    </ScrollView>
+                <ScrollView>
+                    <Editor
+                        x:Name="SpansTable"
+                        Style="{StaticResource EditorStyle}"
+                    />
+                </ScrollView>
 
-                    <ScrollView>
-                        <Editor
-                            x:Name="OperatorTable"
-                            Text="Operator"
-                            HorizontalTextAlignment="Justify"
-                            IsReadOnly="True"
-                            WidthRequest="350"
-                            HeightRequest="400"
-                            HorizontalOptions="Start"
-                            Background="WhiteSmoke"
-                            TextColor="SlateGray"
-                            />
-                    </ScrollView>
+                <HorizontalStackLayout>
+                    <Label
+                        Text="Total program span:"
+                        TextColor="DarkBlue"
+                        FontSize="18"
+              
+                    />
+                    <Label 
+                        x:Name="TotalSpenCounter"
+                        Text=""
+                        TextColor="Purple"
+                        FontSize="18"
+                        Margin="10,0,0,0"
+                    />
 
                 </HorizontalStackLayout>
-
-                <Label
-                    Text="Total"
-                    HorizontalOptions="Center"
-                    TextColor="Purple"
-                    FontSize="17"/>
-
-                <HorizontalStackLayout Padding="45, 0, 0, 0">
-                    <Grid ColumnDefinitions="90, 250, 50, 280">
-                        
-                        <Label 
-                            Text=""
-                            x:Name="UniqueOperandCounter" 
-                            Grid.Column="0" 
-                            HorizontalOptions="Center"/>
-                        
-                        <Label 
-                            Text=""
-                            x:Name="TotalOperandCounter"
-                            Grid.Column="1" 
-                            HorizontalOptions="Center"/>
-                        
-                        <Label 
-                            Text=""
-                            x:Name="UniqueOperatorCounter" 
-                            Grid.Column="2" 
-                            HorizontalOptions="Center"/>
-                        
-                        <Label 
-                            Text=""
-                            x:Name="TotalOperatorCounter" 
-                            Grid.Column="3" 
-                            HorizontalOptions="Center"/>
-                        
-                    </Grid>
-                </HorizontalStackLayout>
-
             </VerticalStackLayout>
 
-            <VerticalStackLayout Grid.Column="1"
-                                 Grid.Row="0"
+            <VerticalStackLayout Grid.Row="2"
+                                 Grid.RowSpan="5"
+                                 Grid.Column="1"
                                  Grid.ColumnSpan="2"
-                                 Margin="0, -460, 0, 0"
-                                 WidthRequest="200"
-                                 HeightRequest="120">
+                                 Margin="40,20,0,0">
+                <HorizontalStackLayout>
+                    <Label
+                        Style="{StaticResource ChepinMetricsLabelStyle}" 
+                        Text ="Chepin's metrics"
+                    />
+                    <Label
+                        Style="{StaticResource ChepinMetricsLabelStyle}" 
+                        Text ="Input/Output"
+                        Margin="250,10,0,0"
+                    />
 
-                <Label
-                    Text=""
-                    x:Name="DictionaryLabel"
-                    FontSize="24"
-                    TextColor="Purple"
-                    HorizontalTextAlignment="Start"/>
-                <Label
-                    Text=""
-                    x:Name="LengthLabel"
-                    FontSize="24"
-                    TextColor="Purple"
-                    HorizontalTextAlignment="Start"
-                    Margin="0, 10, 0, 10"/>
-                <Label
-                    Text=""
-                    x:Name="VolumeLabel"
-                    FontSize="24"
-                    TextColor="Purple"
-                    HorizontalTextAlignment="Start"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
 
+                    <ScrollView>
+                        <Editor
+                            x:Name="ChepinTable"
+                            Style="{StaticResource EditorStyle}" 
+                        />
+                    </ScrollView>
+                    <ScrollView>
+                        <Editor
+                            x:Name="InputOutputTable"
+                            Style="{StaticResource EditorStyle}" 
+                            Margin="110,0,0,0"
+                        />
+                    </ScrollView>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label
+                        Text="Total Chepin's metric: "
+                        TextColor="DarkBlue"
+                        FontSize="18"
+              
+                     />
+                    <Label 
+                        x:Name="TotalChepinMetric"
+                        Text="xx"
+                        TextColor="Purple"
+                        FontSize="18"
+                        Margin="10,0,0,0"
+                    />
+                    <Label
+                        Text="Total Chepin's metric: "
+                        TextColor="DarkBlue"
+                        FontSize="18"
+                        Margin="250,0,0,0"
+                     />
+                    <Label 
+                        x:Name="TotalIOMetric"
+                        Text="xx"
+                        TextColor="Purple"
+                        FontSize="18"
+                        Margin="10,0,0,0"
+                    />
+
+                </HorizontalStackLayout>
+                
             </VerticalStackLayout>
-            
             <!--<Image 
                 Grid.Row="0"  
                 Grid.Column="2" 
