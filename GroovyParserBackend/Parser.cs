@@ -145,6 +145,15 @@ namespace GroovyParserBackend
                         ++i;
                     }
                 }
+                else if (token.Type == TokenType.Keyword && token.Value == "return")
+                {
+                    if (tokens[i + 1].Type == TokenType.Identifier)
+                    {
+                        tokens[i + 1].Status.IsModified = true;
+                        ++i;
+                    }
+
+                }
             }
             foreach (var token in tokens)
             {
@@ -241,21 +250,21 @@ namespace GroovyParserBackend
                 }
 
             }
-            if (control.Any()) 
+            if (control.Any())
             {
-                dict[control] = control.Count; 
+                dict[control] = control.Count;
             }
             if (modified.Any())
             {
-                dict[modified] = modified.Count; 
+                dict[modified] = modified.Count;
             }
             if (io.Any())
             {
-                dict[io] = io.Count; 
+                dict[io] = io.Count;
             }
             if (parasite.Any())
             {
-                dict[parasite] = parasite.Count; 
+                dict[parasite] = parasite.Count;
             }
             return dict;
 
