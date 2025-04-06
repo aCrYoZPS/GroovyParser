@@ -165,7 +165,7 @@ namespace GroovyParserBackend
                         innerStr = string.Empty;
 
                         parenthesesCounter = 1;
-                        if (sourceCode[pos] != ')')
+                        if (pos <= sourceCode.Length - 1 && sourceCode[pos] != ')')
                         {
                             while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
                             {
