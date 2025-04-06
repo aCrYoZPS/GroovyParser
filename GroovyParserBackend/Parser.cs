@@ -1,4 +1,6 @@
 using GroovyParserBackend.Entities;
+using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 
 namespace GroovyParserBackend
 {
@@ -199,6 +201,61 @@ namespace GroovyParserBackend
                 operatorDict = operandOperatorDicts.Item2,
             };
         }
+        public static Dictionary<List<Token>, int> GetIdentificators(TokenDict tokenDict, bool isIO = false)
+        {
+            var tokens = tokenDict.Keys.Where(token => token.Type == TokenType.Identifier).ToList();
+            var dict = new Dictionary<List<Token>, int>();
+
+            if (isIO)
+            {
+                tokens = tokens.Where(token => token.Status.IsIO).ToList();
+            }
+
+            List<Token> control, modified, io, parasite;
+            control = new();
+            modified = new();
+            io = new();
+            parasite = new();
+
+            foreach (var token in tokens)
+            {
+                if (token.Status.IsControl)
+                {
+                    control.Add(token);
+                }
+                else if (token.Status.IsModified)
+                {
+                    modified.Add(token);
+                }
+                else if (token.Status.IsIO)
+                {
+                    io.Add(token);
+                }
+                else
+                {
+                    parasite.Add(token);
+                }
+
+            }
+            if (control.Any()) 
+            {
+                dict[control] = control.Count; 
+            }
+            if (modified.Any())
+            {
+                dict[modified] = modified.Count; 
+            }
+            if (io.Any())
+            {
+                dict[io] = io.Count; 
+            }
+            if (parasite.Any())
+            {
+                dict[parasite] = parasite.Count; 
+            }
+            return dict;
+
+        }
 
         public static double GetChepinMetric(List<Token> tokens)
         {
@@ -238,7 +295,8 @@ namespace GroovyParserBackend
                     token.Type == TokenType.SubscriptOperator)
                 {
                     Console.WriteLine($"{token.Value} : {token.Type}");
-                    if (token.Type == TokenType.FunctionCall && !token.Value.Contains('.'))
+                    if (token.Type == TokenType.FunctionCall && !token.Value.Contains('.') ||
+                        token.Value.StartsWith("System"))
                         continue;
 
                     if (token.Value.Contains('.'))
