@@ -132,18 +132,7 @@ namespace GroovyParserBackend
         public static HalsteadMetrics GetBasicMetrics(List<Token> tokens)
         {
             var operandOperatorDicts = new Tuple<TokenDict, TokenDict>(new TokenDict(), new TokenDict());
-            for (int i = 0; i < tokens.Count; ++i)
-            {
-                var token = tokens[i];
-                if (token.Type == TokenType.Keyword && token.Value.StartsWith("print"))
-                {
-                    if (tokens[i + 1].Type == TokenType.Identifier)
-                    {
-                        tokens[i + 1].Status.IsIO = true;
-                        ++i;
-                    }
-                }
-            }
+
             foreach (var token in tokens)
             {
                 switch (token.Type)
