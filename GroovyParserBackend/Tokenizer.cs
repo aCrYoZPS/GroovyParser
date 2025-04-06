@@ -1162,7 +1162,7 @@ namespace GroovyParserBackend
                                     Value = value + ".member",
                                 });
                                 var t = tokens.FirstOrDefault(t => t.Value == value && t.Type == TokenType.Identifier, null);
-                                if(t != null)
+                                if (t != null)
                                 {
                                     t.Status.IsModified = true;
                                 }
@@ -1336,7 +1336,10 @@ namespace GroovyParserBackend
                             });
                         }
 
-                        isLHS = true;
+                        if (ch == ';' || ch == '\r' || ch == '\n')
+                        {
+                            isLHS = true;
+                        }
                         break;
 
                     default:
