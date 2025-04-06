@@ -11,5 +11,24 @@ namespace GroovyParserBackend.Entities
         public bool IsIO { get; set; } = false;
         public bool IsControl { get; set; } = false;
         public bool IsModified { get; set; } = false;
+
+        public override string ToString()
+        {
+            var t = "Parasite";
+            if (IsControl) 
+            {
+                t = "Control";
+            }
+            else if (IsModified)
+            {
+                t = "Modified";
+            }
+            else if (IsIO)
+            {
+                t = "Input/Output";
+            }
+            return t;
+        }
     }
+
 }
