@@ -134,11 +134,22 @@ namespace GroovyParserBackend
                             {
                                 considerNextIdentifier = false;
                             }
+
                             tokens.Add(new Token()
                             {
                                 Type = type,
                                 Value = value + "()",
                             });
+
+                            if (!isLHS && value.StartsWith("System.console.readLine"))
+                            {
+                                var i = tokens.Count - 1;
+                                while (tokens[i].Type != TokenType.Identifier)
+                                {
+                                    i--;
+                                }
+                                tokens[i].Status.IsIO = true;
+                            }
                         }
                         else
                         {
@@ -170,6 +181,16 @@ namespace GroovyParserBackend
                         }
 
                         innerTokens = Tokenize(innerStr);
+
+                        if (type == TokenType.FunctionCall)
+                        {
+                            foreach (var token in innerTokens)
+                            {
+                                token.Status.IsModified = true;
+                            }
+
+                        }
+
                         tokens.AddRange(innerTokens);
 
                         previousToken = type;
@@ -390,6 +411,7 @@ namespace GroovyParserBackend
                                 Value = "+=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '+')
                         {
@@ -443,6 +465,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = previousToken,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
                         }
                         value = string.Empty;
@@ -455,6 +481,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
                             previousToken = type;
                             type = TokenType.None;
@@ -482,6 +512,7 @@ namespace GroovyParserBackend
                                 Value = "-=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '-')
                         {
@@ -505,6 +536,10 @@ namespace GroovyParserBackend
                                 {
                                     Value = value,
                                     Type = type,
+                                    Status = new VariableStatus
+                                    {
+                                        IsModified = !isLHS,
+                                    }
                                 });
                                 type = TokenType.PostfixDecrement;
                                 tokens.Add(new Token
@@ -546,6 +581,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
                         }
                         else if (pos < sourceCode.Length - 2 && sourceCode[pos + 1] == '*' && sourceCode[pos + 2] == '=')
@@ -557,6 +596,7 @@ namespace GroovyParserBackend
                                 Value = "**=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
                         {
@@ -567,6 +607,7 @@ namespace GroovyParserBackend
                                 Value = "*=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '*')
                         {
@@ -609,6 +650,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
                         }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
@@ -620,6 +665,7 @@ namespace GroovyParserBackend
                                 Value = "/=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '*')
                         {
@@ -655,6 +701,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
                         }
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '=')
@@ -666,6 +716,7 @@ namespace GroovyParserBackend
                                 Value = "%=",
                                 Type = type,
                             });
+                            isLHS = false;
                         }
                         else
                         {
@@ -791,6 +842,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
 
                         }
@@ -880,6 +935,8 @@ namespace GroovyParserBackend
                             type = TokenType.None;
                             value = string.Empty;
                         }
+
+                        isLHS = false;
                         break;
                     case '?':
                         if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == ':')
@@ -912,6 +969,8 @@ namespace GroovyParserBackend
                                 Value = "?=",
                                 Type = type,
                             });
+
+                            isLHS = false;
                         }
                         else if (pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '[')
                         {
@@ -921,6 +980,10 @@ namespace GroovyParserBackend
                             {
                                 Value = value,
                                 Type = type,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
 
                             innerStr = string.Empty;
@@ -1019,6 +1082,10 @@ namespace GroovyParserBackend
                                 {
                                     Value = value,
                                     Type = type,
+                                    Status = new VariableStatus
+                                    {
+                                        IsModified = !isLHS,
+                                    }
                                 });
                             }
                             pos++;
@@ -1063,6 +1130,10 @@ namespace GroovyParserBackend
                             {
                                 Type = TokenType.Identifier,
                                 Value = value,
+                                Status = new VariableStatus
+                                {
+                                    IsModified = !isLHS,
+                                }
                             });
 
                             previousToken = type;
@@ -1163,9 +1234,12 @@ namespace GroovyParserBackend
                     case '\n':
                     case '\r':
                     case ' ':
-                        isLHS = true;
                         if (string.IsNullOrWhiteSpace(value))
                         {
+                            if (sourceCode[pos] == '\n' || sourceCode[pos] == '\r')
+                            {
+                                isLHS = true;
+                            }
                             break;
                         }
                         //check for keyword
@@ -1223,6 +1297,10 @@ namespace GroovyParserBackend
                         {
                             Value = value,
                             Type = type,
+                            Status = new VariableStatus
+                            {
+                                IsModified = !isLHS,
+                            }
                         });
                         previousToken = type;
                         type = TokenType.None;
@@ -1240,6 +1318,8 @@ namespace GroovyParserBackend
                                 Value = (ch == ';') ? ch.ToString() : "new line",
                             });
                         }
+
+                        isLHS = true;
                         break;
 
                     default:
