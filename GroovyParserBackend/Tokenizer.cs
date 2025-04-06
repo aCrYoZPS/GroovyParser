@@ -182,13 +182,19 @@ namespace GroovyParserBackend
 
                         innerTokens = Tokenize(innerStr);
 
-                        if (type == TokenType.FunctionCall)
+                        if (type == TokenType.FunctionCall || type == TokenType.Parentheses)
                         {
                             foreach (var token in innerTokens)
                             {
                                 token.Status.IsModified = true;
                             }
-
+                        }
+                        if (type == TokenType.FunctionCall && value.Contains("print"))
+                        {
+                            foreach (var token in innerTokens)
+                            {
+                                token.Status.IsIO = true;
+                            }
                         }
 
                         tokens.AddRange(innerTokens);
@@ -216,6 +222,7 @@ namespace GroovyParserBackend
                                 pos++;
                             }
                             innerTokens = Tokenize(innerStr);
+
                         }
                         else
                         {
@@ -1147,7 +1154,7 @@ namespace GroovyParserBackend
                         }
                         else
                         {
-                            if (type != TokenType.NumberLiteral)
+                            if (type != TokenType.NumberLiteral && !types.Contains(value))
                             {
                                 tokens.Add(new Token
                                 {
@@ -1320,7 +1327,7 @@ namespace GroovyParserBackend
                         {
                             if (ch == ';' && pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '\r')
                             {
-                                pos += 2;
+                                pos += 1;
                             }
                             tokens.Add(new Token
                             {
