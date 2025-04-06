@@ -165,7 +165,7 @@ namespace GroovyParserBackend
                         innerStr = string.Empty;
 
                         parenthesesCounter = 1;
-                        if (sourceCode[pos] != ')')
+                        if (pos <= sourceCode.Length - 1 && sourceCode[pos] != ')')
                         {
                             while (pos != sourceCode.Length - 1 && parenthesesCounter != 0)
                             {
@@ -182,13 +182,19 @@ namespace GroovyParserBackend
 
                         innerTokens = Tokenize(innerStr);
 
-                        if (type == TokenType.FunctionCall)
+                        if (type == TokenType.FunctionCall || type == TokenType.Parentheses)
                         {
                             foreach (var token in innerTokens)
                             {
                                 token.Status.IsModified = true;
                             }
-
+                        }
+                        if (type == TokenType.FunctionCall && value.Contains("print"))
+                        {
+                            foreach (var token in innerTokens)
+                            {
+                                token.Status.IsIO = true;
+                            }
                         }
 
                         tokens.AddRange(innerTokens);
@@ -216,6 +222,7 @@ namespace GroovyParserBackend
                                 pos++;
                             }
                             innerTokens = Tokenize(innerStr);
+
                         }
                         else
                         {
@@ -232,6 +239,11 @@ namespace GroovyParserBackend
                                     Type = type,
                                     Value = value + "[]",
                                 });
+                                var tok = tokens.FirstOrDefault(t => t.Value == value && t.Type == TokenType.Identifier, null);
+                                if (tok != null)
+                                {
+                                    tok.Status.IsModified = true;
+                                }
                             }
                             else
                             {
@@ -1142,13 +1154,18 @@ namespace GroovyParserBackend
                         }
                         else
                         {
-                            if (type != TokenType.NumberLiteral)
+                            if (type != TokenType.NumberLiteral && !types.Contains(value))
                             {
                                 tokens.Add(new Token
                                 {
                                     Type = TokenType.MemberAccess,
                                     Value = value + ".member",
                                 });
+                                var t = tokens.FirstOrDefault(t => t.Value == value && t.Type == TokenType.Identifier, null);
+                                if(t != null)
+                                {
+                                    t.Status.IsModified = true;
+                                }
                                 isMember = true;
                             }
                             value += ch;
@@ -1310,7 +1327,7 @@ namespace GroovyParserBackend
                         {
                             if (ch == ';' && pos != sourceCode.Length - 1 && sourceCode[pos + 1] == '\r')
                             {
-                                pos += 2;
+                                pos += 1;
                             }
                             tokens.Add(new Token
                             {

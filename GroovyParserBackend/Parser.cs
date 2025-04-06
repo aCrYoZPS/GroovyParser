@@ -151,6 +151,10 @@ namespace GroovyParserBackend
                 switch (token.Type)
                 {
                     case TokenType.Identifier:
+                        if (token.Value.StartsWith("System") || token.Value.StartsWith("File") ||
+                        token.Value.StartsWith("Console"))
+                            continue;
+
                         if (operandOperatorDicts.Item1.ContainsKey(token))
                         {
                             var count = operandOperatorDicts.Item1[token];
@@ -296,7 +300,8 @@ namespace GroovyParserBackend
                 {
                     Console.WriteLine($"{token.Value} : {token.Type}");
                     if (token.Type == TokenType.FunctionCall && !token.Value.Contains('.') ||
-                        token.Value.StartsWith("System"))
+                        token.Value.StartsWith("System") || token.Value.StartsWith("File") ||
+                        token.Value.StartsWith("Console"))
                         continue;
 
                     if (token.Value.Contains('.'))
