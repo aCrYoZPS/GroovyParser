@@ -84,13 +84,11 @@ namespace ParserInterface
             foreach (var key in keys)
             {
 
-                chepinText += '\n' + key.First().Status.ToString().ToUpper() + '\n';
+                chepinText += '\n' + key.First().Status.ToString().ToUpper();
 
                 string valuesLine = string.Join(" ", key.Select(k => k.Value));
 
-                chepinText += valuesLine.PadRight(identColumnWidth)
-                            + normalIdent[key].ToString().PadRight(countColumnWidth)
-                            + "\n";
+                chepinText += '\t' + normalIdent[key].ToString() + '\n' + valuesLine + "\n";
                 totalIdent.AddRange(key);
             }
 
@@ -101,13 +99,11 @@ namespace ParserInterface
             foreach (var key in ioKeys)
             {
 
-                ioText += '\n' + key.First().Status.ToString().ToUpper() + '\n';
+                ioText += '\n' + key.First().Status.ToString().ToUpper();
 
                 string valuesLine = string.Join(" ", key.Select(k => k.Value));
 
-                ioText += valuesLine.PadRight(identColumnWidth)
-                            + IOIdent[key].ToString().PadRight(countColumnWidth)
-                            + "\n";
+                ioText += '\t' + IOIdent[key].ToString() + '\n' + valuesLine + "\n";
                 totalIdent.AddRange(key);
             }
 

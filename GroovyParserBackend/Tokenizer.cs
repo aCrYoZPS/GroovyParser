@@ -232,6 +232,11 @@ namespace GroovyParserBackend
                                     Type = type,
                                     Value = value + "[]",
                                 });
+                                var tok = tokens.FirstOrDefault(t => t.Value == value && t.Type == TokenType.Identifier, null);
+                                if (tok != null)
+                                {
+                                    tok.Status.IsModified = true;
+                                }
                             }
                             else
                             {
@@ -1149,6 +1154,11 @@ namespace GroovyParserBackend
                                     Type = TokenType.MemberAccess,
                                     Value = value + ".member",
                                 });
+                                var t = tokens.FirstOrDefault(t => t.Value == value && t.Type == TokenType.Identifier, null);
+                                if(t != null)
+                                {
+                                    t.Status.IsModified = true;
+                                }
                                 isMember = true;
                             }
                             value += ch;
