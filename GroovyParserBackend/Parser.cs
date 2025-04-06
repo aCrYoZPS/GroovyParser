@@ -137,7 +137,7 @@ namespace GroovyParserBackend
             for (int i = 0; i < tokens.Count; ++i)
             {
                 var token = tokens[i];
-                if (token.Type == TokenType.Keyword && token.Value.StartsWith("print"))
+                if (token.Type == TokenType.FunctionCall && token.Value.StartsWith("print"))
                 {
                     if (tokens[i + 1].Type == TokenType.Identifier)
                     {
