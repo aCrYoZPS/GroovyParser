@@ -200,6 +200,34 @@ namespace GroovyParserBackend
             };
         }
 
+        public static double GetChepinMetric(List<Token> tokens)
+        {
+            var control = 0;
+            var io = 0;
+            var modified = 0;
+            var parasite = 0;
+            foreach (var token in tokens)
+            {
+                if (token.Status.IsControl)
+                {
+                    control += 1;
+                }
+                else if (token.Status.IsModified)
+                {
+                    modified += 1;
+                }
+                else if (token.Status.IsIO)
+                {
+                    io += 1;
+                }
+                else
+                {
+                    parasite += 1;
+                }
+            }
+            return io + 2 * modified + 3 * control + 0.5 * parasite;
+        }
+
         public static TokenDict GetSpans(List<Token> tokens)
         {
             TokenDict spans = new();
