@@ -132,11 +132,39 @@ namespace GroovyParserBackend
         public static HalsteadMetrics GetBasicMetrics(List<Token> tokens)
         {
             var operandOperatorDicts = new Tuple<TokenDict, TokenDict>(new TokenDict(), new TokenDict());
+            for (int i = 0; i < tokens.Count; ++i)
+            {
+                var token = tokens[i];
+                if (token.Type == TokenType.Keyword && token.Value.StartsWith("print"))
+                {
+                    if (tokens[i + 1].Type == TokenType.Identifier)
+                    {
+                        tokens[i + 1].Status.IsIO = true;
+                        ++i;
+                    }
+                }
+            }
             foreach (var token in tokens)
             {
                 switch (token.Type)
                 {
                     case TokenType.Identifier:
+                        if (operandOperatorDicts.Item1.ContainsKey(token))
+                        {
+                            var count = operandOperatorDicts.Item1[token];
+                            var prevKey = operandOperatorDicts.Item1.First(x => x.Value == count && x.Key.Equals(token)).Key;
+                            operandOperatorDicts.Item1.Remove(token);
+                            token.Status.IsControl = prevKey.Status.IsControl || token.Status.IsControl;
+                            token.Status.IsModified = prevKey.Status.IsModified || token.Status.IsModified;
+                            token.Status.IsIO = prevKey.Status.IsIO || token.Status.IsIO;
+                            token.Status.IsParasite = prevKey.Status.IsParasite || token.Status.IsParasite;
+                            operandOperatorDicts.Item1[token] = count + 1;
+                        }
+                        else
+                        {
+                            operandOperatorDicts.Item1[token] = 1;
+                        }
+                        break;
                     case TokenType.NumberLiteral:
                     case TokenType.StringLiteral:
                         if (!operandOperatorDicts.Item1.TryAdd(token, 1))
@@ -177,7 +205,7 @@ namespace GroovyParserBackend
             TokenDict spans = new();
             foreach (var token in tokens)
             {
-                if (token.Type == TokenType.Identifier || 
+                if (token.Type == TokenType.Identifier ||
                     token.Type == TokenType.FunctionCall ||
                     token.Type == TokenType.SubscriptOperator)
                 {
@@ -206,7 +234,7 @@ namespace GroovyParserBackend
             foreach (var key in spans.Keys.ToList())
             {
                 spans[key] -= 1;
-                if(spans[key] == 0)
+                if (spans[key] == 0)
                 {
                     spans.Remove(key);
                 }

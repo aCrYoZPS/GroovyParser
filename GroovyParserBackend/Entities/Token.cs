@@ -11,15 +11,18 @@ namespace GroovyParserBackend.Entities
         public override string ToString()
         {
             //return $"Token Type: {this.Type}\nToken Value: {this.Value}";
-            return this.Value;
+            return Value;
         }
 
         public string Display()
         {
-            return $"Token Type: {this.Type}\nToken Value: {this.Value}";
+            return $"Token Type: {Type}\nToken Value: {Value}\n" +
+                   $"Token status:\nIs parasite: {Status.IsParasite}\n" +
+                   $"Is modified: {Status.IsModified}\nIsIO: {Status.IsIO}\n" +
+                   $"IsControl: {Status.IsControl}";
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is Token other)
             {
