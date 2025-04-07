@@ -172,6 +172,7 @@ namespace GroovyParserBackend
                             token.Status.IsControl = prevKey.Status.IsControl || token.Status.IsControl;
                             token.Status.IsModified = prevKey.Status.IsModified || token.Status.IsModified;
                             token.Status.IsIO = prevKey.Status.IsIO || token.Status.IsIO;
+                            token.Status.IsInput = prevKey.Status.IsInput || token.Status.IsInput;
                             token.Status.IsParasite = prevKey.Status.IsParasite || token.Status.IsParasite;
                             operandOperatorDicts.Item1[token] = count + 1;
                         }
@@ -224,17 +225,22 @@ namespace GroovyParserBackend
                 tokens = tokens.Where(token => token.Status.IsIO).ToList();
             }
 
-            List<Token> control, modified, io, parasite;
+            List<Token> control, modified, io, parasite, input;
             control = new();
             modified = new();
             io = new();
             parasite = new();
+            input = new();
 
             foreach (var token in tokens)
             {
                 if (token.Status.IsControl)
                 {
                     control.Add(token);
+                }
+                else if (token.Status.IsInput)
+                {
+                    input.Add(token);
                 }
                 else if (token.Status.IsModified)
                 {
@@ -253,6 +259,10 @@ namespace GroovyParserBackend
             if (control.Any())
             {
                 dict[control] = control.Count;
+            }
+            if (input.Any())
+            {
+                dict[input] = input.Count;
             }
             if (modified.Any())
             {
