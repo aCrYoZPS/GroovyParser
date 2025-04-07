@@ -149,6 +149,7 @@ namespace GroovyParserBackend
                                     i--;
                                 }
                                 tokens[i].Status.IsIO = true;
+                                tokens[i].Status.IsInput = true;
                             }
                         }
                         else
