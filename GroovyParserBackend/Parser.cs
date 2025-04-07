@@ -244,7 +244,7 @@ namespace GroovyParserBackend
                 {
                     io.Add(token);
                 }
-                else
+                else if (token.Value != "")
                 {
                     parasite.Add(token);
                 }
